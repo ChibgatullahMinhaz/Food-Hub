@@ -5,9 +5,10 @@ import { fromNodeHeaders } from "better-auth/node";
 import { catchAsync } from "@/utils/catchAsync";
 import ApiError from "@/errors/ApiError";
 import type { Role } from "@/prisma/generated/prisma/enums";
+import type { User } from "better-auth";
 
 // 1. Require Auth (Only Logged-in Users)
-export const requireAuth: RequestHandler = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+export const requireAuth:RequestHandler = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
   const session = await auth.api.getSession({
     headers: fromNodeHeaders(req.headers),
   });
@@ -16,25 +17,25 @@ export const requireAuth: RequestHandler = catchAsync(async (req: Request, res: 
     throw new ApiError(httpStatus.UNAUTHORIZED, "You are not logged in. Please log in to get access.");
   }
 
-  req.user = session.user;
+  req.user = session.user as User & { role: Role };
   req.session = session.session;
-
+  
   next();
 });
 
 // 2. Optional Auth (Public or Logged-in Users)
-export const optionalAuth: RequestHandler = catchAsync(async (req: Request, _res: Response, next: NextFunction) => {
+export const optionalAuth:RequestHandler = catchAsync(async (req: Request, _res: Response, next: NextFunction) => {
   try {
     const session = await auth.api.getSession({
       headers: fromNodeHeaders(req.headers),
     });
 
     if (session) {
-      req.user = session.user;
+      req.user = session.user as User & { role: Role };
       req.session = session.session;
     }
   } catch (error) {
-
+   
   }
   next();
 });
@@ -46,7 +47,7 @@ export const requireRole = (...allowedRoles: Role[]) => {
       return next(new ApiError(httpStatus.UNAUTHORIZED, "You are not logged in."));
     }
 
-    const userRole = req.user.role as Role;
+    const userRole = req.user.role as Role; 
 
     if (!allowedRoles.includes(userRole)) {
       return next(new ApiError(httpStatus.FORBIDDEN, "Forbidden: You don't have permission to perform this action."));
