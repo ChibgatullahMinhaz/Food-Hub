@@ -1,0 +1,38 @@
+model Category {
+  id        String   @id @default(cuid())
+  name      String   @unique
+  slug      String   @unique
+  image     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  meals Meal[]
+
+  @@map("category")
+}
+
+model Meal {
+  id           String          @id @default(cuid())
+  name         String
+  description  String          @db.Text
+  price        Float
+  image        String?
+  isAvailable  Boolean         @default(true)
+  isVegetarian Boolean         @default(false)
+  dietaryType  String?
+  providerId   String
+  provider     ProviderProfile @relation(fields: [providerId], references: [id], onDelete: Cascade)
+  categoryId   String
+  category     Category        @relation(fields: [categoryId], references: [id], onDelete: Restrict)
+
+  orderItems OrderItem[]
+  reviews    Review[]
+  cartItems  CartItem[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([providerId])
+  @@index([categoryId])
+  @@map("meal")
+}
