@@ -1,6 +1,9 @@
-import type { BasePaginationPayload } from "@/types";
+import type { Role, UserStatus } from "@/prisma/generated/prisma/enums";
+import type { BasePaginationPayload } from "@/types/based.interface";
 
-export interface GetAllUserPayload extends BasePaginationPayload {
-    search?: string;
-    role?: string;
-} 
+export interface IUserQueryFilters extends BasePaginationPayload {
+    role?: Role | undefined;
+    status?: UserStatus | undefined;
+    isEmailVerified?: boolean;
+    search?: string | undefined;
+}

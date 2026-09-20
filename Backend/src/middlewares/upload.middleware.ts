@@ -1,6 +1,6 @@
 import path from "path";
 import multer, { MulterError } from "multer";
-import { ErrorRequestHandler } from "express";
+import type { ErrorRequestHandler } from "express";
 import ApiError from "../errors/ApiError";
 
 const ALLOWED_IMAGE_MIME_TYPES = new Set([

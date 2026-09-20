@@ -2,10 +2,10 @@ import type { ErrorRequestHandler } from 'express';
 import { ZodError } from 'zod';
 import ApiError from '../errors/ApiError';
 import { handlePrismaError } from '../errors/handlePrismaError';
-import { TErrorSource } from '../interfaces/error';
 import handleZodError from './handleZodError';
-import { Prisma } from '@/generated/prisma/client';
 import { env } from '@/config/env';
+import { Prisma } from '@/prisma/generated/prisma/client';
+import type { TErrorSource } from '@/types/error.interface';
 
 export const globalErrorHandler: ErrorRequestHandler = (err, req, res, next) => {
   // Default values

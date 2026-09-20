@@ -1,12 +1,14 @@
-import type { NextFunction, Request, Response } from 'express'
-import status from 'http-status'
+import ApiError from '@/errors/ApiError'
+import type { RequestHandler } from 'express'
+import httpStatus from 'http-status'
 
-const notFound = (req: Request, res: Response, _next: NextFunction) => {
-  res.status(status.INTERNAL_SERVER_ERROR).json({
-    success: false,
-    messsage: 'API NOT FOUND',
-    error: `The requested URL ${req.originalUrl} with method ${req.method} does not exist--😢😥`,
-  })
+const notFound: RequestHandler = (req, res, next) => {
+  next(
+    new ApiError(
+      httpStatus.NOT_FOUND,
+      `API Not Found: [${req.method}] ${req.originalUrl}`
+    )
+  )
 }
 
 export default notFound
