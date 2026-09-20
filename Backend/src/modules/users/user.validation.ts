@@ -20,4 +20,13 @@ export const getUsersQuerySchema = z.object({
   }),
 });
 
+
+export const updateUserSchema = z.object({
+  body: z.object({
+    name: z.string().min(2).optional(),
+    role: z.nativeEnum(Role).optional(),
+    status: z.nativeEnum(UserStatus).optional(),
+  }).strict(), 
+});
+
 export type GetUsersQueryInput = z.infer<typeof getUsersQuerySchema>["query"];

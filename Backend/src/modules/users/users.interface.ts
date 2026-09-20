@@ -7,3 +7,4 @@ export interface IUserQueryFilters extends BasePaginationPayload {
     isEmailVerified?: boolean;
     search?: string | undefined;
 }
+

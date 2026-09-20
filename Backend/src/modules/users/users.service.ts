@@ -1,6 +1,8 @@
 import { prisma } from "@/lib/prisma";
 import type { IUserQueryFilters } from "./users.interface";
 import type { Prisma } from "@/prisma/generated/prisma/client";
+import ApiError from "@/errors/ApiError";
+import httpStatus from 'http-status'
 
 const getAllUsers = async (filters: IUserQueryFilters) => {
     const { cursor, limit, role, search, status, isEmailVerified } = filters;
@@ -74,8 +76,36 @@ const getAllUsers = async (filters: IUserQueryFilters) => {
     }
 }
 
+const updateUserById = async (id: string, payload: Prisma.UserUpdateInput) => {
+    const updatedUser = await prisma.user.update({
+        where: { id },
+        data: payload, 
+        select: {
+            id: true,
+            name: true,
+            email: true,
+            role: true,
+            status: true,
+        },
+    });
+
+    return updatedUser;
+}
+
+const deleteUserById = async (id: string) => {
+    const isExist = await prisma.user.findUnique({ where: { id } })
+
+    if (!isExist) {
+        throw new ApiError(httpStatus.NOT_FOUND, 'User Not Found ! I think this user already Delated ');
+    }
+    await prisma.user.delete({ where: { id } })
+    return { message: "User Deleted Sucessfully !" }
+}
+
 
 export const usersService
     = {
-    getAllUsers
+    getAllUsers,
+    deleteUserById, 
+    updateUserById
 }
