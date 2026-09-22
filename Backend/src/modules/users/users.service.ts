@@ -1,6 +1,6 @@
 import { prisma } from "@/lib/prisma";
 import type { IUserQueryFilters } from "./users.interface";
-import type { Prisma } from "@/prisma/generated/prisma/client";
+import { UserStatus, type Prisma } from "@/prisma/generated/prisma/client";
 import ApiError from "@/errors/ApiError";
 import httpStatus from 'http-status'
 
@@ -95,6 +95,12 @@ const updateUserById = async (id: string, payload: Prisma.UserUpdateInput) => {
             updatedAt: true,
         },
     });
+    if (payload.status === UserStatus.SUSPENDED || payload.status === UserStatus.BLOCKED) {
+        await prisma.session.deleteMany({
+            where: { userId: id },
+        });
+        
+    }
 
     return updatedUser;
 }
@@ -153,7 +159,7 @@ const getUserDetailsWithStats = async (userId: string) => {
             },
             _count: {
                 select: {
-                    orders: true, 
+                    orders: true,
                 },
             },
         },
@@ -172,7 +178,7 @@ export const usersService
     = {
     getAllUsers,
     deleteUserById,
-    updateUserById, 
+    updateUserById,
     getCurrentUserProfile,
     getUserDetailsWithStats
 }

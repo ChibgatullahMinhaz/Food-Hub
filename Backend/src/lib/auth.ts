@@ -1,11 +1,26 @@
 import { betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
 import { prisma } from "./prisma.js";
-import { Role } from "@/prisma/generated/prisma/enums.js";
+import { Role, UserStatus } from "@/prisma/generated/prisma/enums.js";
 export const auth = betterAuth({
     database: prismaAdapter(prisma, {
         provider: "postgresql",
     }),
+    databaseHooks: {
+        session: {
+            create: {
+                before: async (session) => {
+                    const user = await prisma.user.findUnique({
+                        where: { id: session.userId },
+                    });
+
+                    if (user?.status === UserStatus.BLOCKED || user?.status === UserStatus.SUSPENDED) {
+                        throw new Error(`Your account has been ${UserStatus} by the admin.`);
+                    }
+                },
+            },
+        },
+    },
     emailAndPassword: {
         enabled: true,
         autoSignIn: true,

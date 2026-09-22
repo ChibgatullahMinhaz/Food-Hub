@@ -18,6 +18,12 @@ export const requireAuth:RequestHandler = catchAsync(async (req: Request, res: R
   }
 
   req.user = session.user as User & { role: Role };
+  if (req.user.status === 'BLOCKED') {
+    throw new ApiError(
+        httpStatus.FORBIDDEN, 
+        "Your account has been blocked by the admin. Please contact support."
+    );
+}
   req.session = session.session;
   
   next();

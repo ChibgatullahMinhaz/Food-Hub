@@ -1,10 +1,10 @@
-import type { Role } from "@/prisma/generated/prisma/enums";
+import type { Role, UserStatus } from "@/prisma/generated/prisma/enums";
 import { Session, User } from "better-auth";
 
 declare global {
   namespace Express {
     interface Request {
-      user?: User & {role : Role};
+      user?: User & {role : Role, status: UserStatus};
       session?: Session;
     }
   }
