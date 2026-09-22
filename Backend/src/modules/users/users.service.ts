@@ -109,10 +109,70 @@ const deleteUserById = async (id: string) => {
     return { message: "User Deleted Sucessfully !" }
 }
 
+const getCurrentUserProfile = async (id: string) => {
+    const user = await prisma.user.findUnique({
+        where: { id },
+        select: {
+            id: true,
+            name: true,
+            email: true,
+            role: true,
+            status: true,
+            createdAt: true,
+            updatedAt: true,
+        },
+    });
+
+    if (!user) {
+        throw new ApiError(httpStatus.NOT_FOUND, "User not found!");
+    }
+
+    return user;
+};
+
+const getUserDetailsWithStats = async (userId: string) => {
+    const user = await prisma.user.findUnique({
+        where: { id: userId },
+        select: {
+            id: true,
+            name: true,
+            email: true,
+            role: true,
+            status: true,
+            createdAt: true,
+            updatedAt: true,
+            orders: {
+                take: 5,
+                orderBy: { createdAt: "desc" },
+                select: {
+                    id: true,
+                    totalAmount: true,
+                    status: true,
+                    createdAt: true,
+                },
+            },
+            _count: {
+                select: {
+                    orders: true, 
+                },
+            },
+        },
+    });
+
+    if (!user) {
+        throw new ApiError(httpStatus.NOT_FOUND, "User not found!");
+    }
+
+    return user;
+};
+
+
 
 export const usersService
     = {
     getAllUsers,
     deleteUserById,
-    updateUserById
+    updateUserById, 
+    getCurrentUserProfile,
+    getUserDetailsWithStats
 }

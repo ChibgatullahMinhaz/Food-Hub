@@ -39,6 +39,11 @@ export const userDeleteSchema = z.object({
     id: z.string().uuid("ID is required and must be a valid UUID"),
   })
 });
+export const userDetailsSchema = z.object({
+  params: z.object({
+    id: z.string().uuid("ID is required and must be a valid UUID"),
+  })
+});
 
 export const userUpdateQuerySchema = z.object({
   body: z.object({
@@ -53,3 +58,4 @@ export type GetUsersQueryInput = z.infer<typeof getUsersQuerySchema>["query"];
 export type UpdateUsersBodyInput = z.infer<typeof updateUserSchema>["body"];
 export type UpdateUsersParamsInput = z.infer<typeof updateUserSchema>["params"];
 export type DeleteUsersParamsInput = z.infer<typeof userDeleteSchema>["params"];
+export type DetailsUsersParamsInput = z.infer<typeof userDetailsSchema>["params"];
