@@ -77,15 +77,22 @@ const getAllUsers = async (filters: IUserQueryFilters) => {
 }
 
 const updateUserById = async (id: string, payload: Prisma.UserUpdateInput) => {
+
+    const isExist = await prisma.user.findUnique({ where: { id } });
+    if (!isExist) {
+        throw new ApiError(httpStatus.NOT_FOUND, "User not found with this ID");
+    }
+
     const updatedUser = await prisma.user.update({
         where: { id },
-        data: payload, 
+        data: payload,
         select: {
             id: true,
             name: true,
             email: true,
             role: true,
             status: true,
+            updatedAt: true,
         },
     });
 
@@ -106,6 +113,6 @@ const deleteUserById = async (id: string) => {
 export const usersService
     = {
     getAllUsers,
-    deleteUserById, 
+    deleteUserById,
     updateUserById
 }
