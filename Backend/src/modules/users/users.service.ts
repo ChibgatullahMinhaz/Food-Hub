@@ -74,7 +74,7 @@ const getAllUsers = async (filters: IUserQueryFilters) => {
             hasMore
         }
     }
-}
+};
 
 const updateUserById = async (id: string, payload: Prisma.UserUpdateInput) => {
 

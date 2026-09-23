@@ -33,6 +33,8 @@ export type ProviderProfileMinAggregateOutputType = {
   cuisineType: string | null
   address: string | null
   isOpen: boolean | null
+  phone: string | null
+  status: $Enums.ProviderStatus | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -46,6 +48,8 @@ export type ProviderProfileMaxAggregateOutputType = {
   cuisineType: string | null
   address: string | null
   isOpen: boolean | null
+  phone: string | null
+  status: $Enums.ProviderStatus | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -59,6 +63,8 @@ export type ProviderProfileCountAggregateOutputType = {
   cuisineType: number
   address: number
   isOpen: number
+  phone: number
+  status: number
   createdAt: number
   updatedAt: number
   _all: number
@@ -74,6 +80,8 @@ export type ProviderProfileMinAggregateInputType = {
   cuisineType?: true
   address?: true
   isOpen?: true
+  phone?: true
+  status?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -87,6 +95,8 @@ export type ProviderProfileMaxAggregateInputType = {
   cuisineType?: true
   address?: true
   isOpen?: true
+  phone?: true
+  status?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -100,6 +110,8 @@ export type ProviderProfileCountAggregateInputType = {
   cuisineType?: true
   address?: true
   isOpen?: true
+  phone?: true
+  status?: true
   createdAt?: true
   updatedAt?: true
   _all?: true
@@ -186,6 +198,8 @@ export type ProviderProfileGroupByOutputType = {
   cuisineType: string | null
   address: string | null
   isOpen: boolean
+  phone: string
+  status: $Enums.ProviderStatus
   createdAt: Date
   updatedAt: Date
   _count: ProviderProfileCountAggregateOutputType | null
@@ -220,6 +234,8 @@ export type ProviderProfileWhereInput = {
   cuisineType?: Prisma.StringNullableFilter<"ProviderProfile"> | string | null
   address?: Prisma.StringNullableFilter<"ProviderProfile"> | string | null
   isOpen?: Prisma.BoolFilter<"ProviderProfile"> | boolean
+  phone?: Prisma.StringFilter<"ProviderProfile"> | string
+  status?: Prisma.EnumProviderStatusFilter<"ProviderProfile"> | $Enums.ProviderStatus
   createdAt?: Prisma.DateTimeFilter<"ProviderProfile"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"ProviderProfile"> | Date | string
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
@@ -235,6 +251,8 @@ export type ProviderProfileOrderByWithRelationInput = {
   cuisineType?: Prisma.SortOrderInput | Prisma.SortOrder
   address?: Prisma.SortOrderInput | Prisma.SortOrder
   isOpen?: Prisma.SortOrder
+  phone?: Prisma.SortOrder
+  status?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   user?: Prisma.UserOrderByWithRelationInput
@@ -253,6 +271,8 @@ export type ProviderProfileWhereUniqueInput = Prisma.AtLeast<{
   cuisineType?: Prisma.StringNullableFilter<"ProviderProfile"> | string | null
   address?: Prisma.StringNullableFilter<"ProviderProfile"> | string | null
   isOpen?: Prisma.BoolFilter<"ProviderProfile"> | boolean
+  phone?: Prisma.StringFilter<"ProviderProfile"> | string
+  status?: Prisma.EnumProviderStatusFilter<"ProviderProfile"> | $Enums.ProviderStatus
   createdAt?: Prisma.DateTimeFilter<"ProviderProfile"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"ProviderProfile"> | Date | string
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
@@ -268,6 +288,8 @@ export type ProviderProfileOrderByWithAggregationInput = {
   cuisineType?: Prisma.SortOrderInput | Prisma.SortOrder
   address?: Prisma.SortOrderInput | Prisma.SortOrder
   isOpen?: Prisma.SortOrder
+  phone?: Prisma.SortOrder
+  status?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   _count?: Prisma.ProviderProfileCountOrderByAggregateInput
@@ -287,6 +309,8 @@ export type ProviderProfileScalarWhereWithAggregatesInput = {
   cuisineType?: Prisma.StringNullableWithAggregatesFilter<"ProviderProfile"> | string | null
   address?: Prisma.StringNullableWithAggregatesFilter<"ProviderProfile"> | string | null
   isOpen?: Prisma.BoolWithAggregatesFilter<"ProviderProfile"> | boolean
+  phone?: Prisma.StringWithAggregatesFilter<"ProviderProfile"> | string
+  status?: Prisma.EnumProviderStatusWithAggregatesFilter<"ProviderProfile"> | $Enums.ProviderStatus
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"ProviderProfile"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"ProviderProfile"> | Date | string
 }
@@ -299,6 +323,8 @@ export type ProviderProfileCreateInput = {
   cuisineType?: string | null
   address?: string | null
   isOpen?: boolean
+  phone: string
+  status?: $Enums.ProviderStatus
   createdAt?: Date | string
   updatedAt?: Date | string
   user: Prisma.UserCreateNestedOneWithoutProviderProfileInput
@@ -314,6 +340,8 @@ export type ProviderProfileUncheckedCreateInput = {
   cuisineType?: string | null
   address?: string | null
   isOpen?: boolean
+  phone: string
+  status?: $Enums.ProviderStatus
   createdAt?: Date | string
   updatedAt?: Date | string
   meals?: Prisma.MealUncheckedCreateNestedManyWithoutProviderInput
@@ -327,6 +355,8 @@ export type ProviderProfileUpdateInput = {
   cuisineType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isOpen?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  phone?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumProviderStatusFieldUpdateOperationsInput | $Enums.ProviderStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserUpdateOneRequiredWithoutProviderProfileNestedInput
@@ -342,6 +372,8 @@ export type ProviderProfileUncheckedUpdateInput = {
   cuisineType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isOpen?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  phone?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumProviderStatusFieldUpdateOperationsInput | $Enums.ProviderStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   meals?: Prisma.MealUncheckedUpdateManyWithoutProviderNestedInput
@@ -356,6 +388,8 @@ export type ProviderProfileCreateManyInput = {
   cuisineType?: string | null
   address?: string | null
   isOpen?: boolean
+  phone: string
+  status?: $Enums.ProviderStatus
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -368,6 +402,8 @@ export type ProviderProfileUpdateManyMutationInput = {
   cuisineType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isOpen?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  phone?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumProviderStatusFieldUpdateOperationsInput | $Enums.ProviderStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -381,6 +417,8 @@ export type ProviderProfileUncheckedUpdateManyInput = {
   cuisineType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isOpen?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  phone?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumProviderStatusFieldUpdateOperationsInput | $Enums.ProviderStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -404,6 +442,8 @@ export type ProviderProfileCountOrderByAggregateInput = {
   cuisineType?: Prisma.SortOrder
   address?: Prisma.SortOrder
   isOpen?: Prisma.SortOrder
+  phone?: Prisma.SortOrder
+  status?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -417,6 +457,8 @@ export type ProviderProfileMaxOrderByAggregateInput = {
   cuisineType?: Prisma.SortOrder
   address?: Prisma.SortOrder
   isOpen?: Prisma.SortOrder
+  phone?: Prisma.SortOrder
+  status?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -430,6 +472,8 @@ export type ProviderProfileMinOrderByAggregateInput = {
   cuisineType?: Prisma.SortOrder
   address?: Prisma.SortOrder
   isOpen?: Prisma.SortOrder
+  phone?: Prisma.SortOrder
+  status?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -480,6 +524,10 @@ export type ProviderProfileUpdateOneRequiredWithoutMealsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.ProviderProfileUpdateToOneWithWhereWithoutMealsInput, Prisma.ProviderProfileUpdateWithoutMealsInput>, Prisma.ProviderProfileUncheckedUpdateWithoutMealsInput>
 }
 
+export type EnumProviderStatusFieldUpdateOperationsInput = {
+  set?: $Enums.ProviderStatus
+}
+
 export type ProviderProfileCreateWithoutUserInput = {
   id?: string
   restaurantName: string
@@ -488,6 +536,8 @@ export type ProviderProfileCreateWithoutUserInput = {
   cuisineType?: string | null
   address?: string | null
   isOpen?: boolean
+  phone: string
+  status?: $Enums.ProviderStatus
   createdAt?: Date | string
   updatedAt?: Date | string
   meals?: Prisma.MealCreateNestedManyWithoutProviderInput
@@ -501,6 +551,8 @@ export type ProviderProfileUncheckedCreateWithoutUserInput = {
   cuisineType?: string | null
   address?: string | null
   isOpen?: boolean
+  phone: string
+  status?: $Enums.ProviderStatus
   createdAt?: Date | string
   updatedAt?: Date | string
   meals?: Prisma.MealUncheckedCreateNestedManyWithoutProviderInput
@@ -530,6 +582,8 @@ export type ProviderProfileUpdateWithoutUserInput = {
   cuisineType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isOpen?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  phone?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumProviderStatusFieldUpdateOperationsInput | $Enums.ProviderStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   meals?: Prisma.MealUpdateManyWithoutProviderNestedInput
@@ -543,6 +597,8 @@ export type ProviderProfileUncheckedUpdateWithoutUserInput = {
   cuisineType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isOpen?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  phone?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumProviderStatusFieldUpdateOperationsInput | $Enums.ProviderStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   meals?: Prisma.MealUncheckedUpdateManyWithoutProviderNestedInput
@@ -556,6 +612,8 @@ export type ProviderProfileCreateWithoutMealsInput = {
   cuisineType?: string | null
   address?: string | null
   isOpen?: boolean
+  phone: string
+  status?: $Enums.ProviderStatus
   createdAt?: Date | string
   updatedAt?: Date | string
   user: Prisma.UserCreateNestedOneWithoutProviderProfileInput
@@ -570,6 +628,8 @@ export type ProviderProfileUncheckedCreateWithoutMealsInput = {
   cuisineType?: string | null
   address?: string | null
   isOpen?: boolean
+  phone: string
+  status?: $Enums.ProviderStatus
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -598,6 +658,8 @@ export type ProviderProfileUpdateWithoutMealsInput = {
   cuisineType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isOpen?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  phone?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumProviderStatusFieldUpdateOperationsInput | $Enums.ProviderStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserUpdateOneRequiredWithoutProviderProfileNestedInput
@@ -612,6 +674,8 @@ export type ProviderProfileUncheckedUpdateWithoutMealsInput = {
   cuisineType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isOpen?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  phone?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumProviderStatusFieldUpdateOperationsInput | $Enums.ProviderStatus
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -656,6 +720,8 @@ export type ProviderProfileSelect<ExtArgs extends runtime.Types.Extensions.Inter
   cuisineType?: boolean
   address?: boolean
   isOpen?: boolean
+  phone?: boolean
+  status?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
@@ -672,6 +738,8 @@ export type ProviderProfileSelectCreateManyAndReturn<ExtArgs extends runtime.Typ
   cuisineType?: boolean
   address?: boolean
   isOpen?: boolean
+  phone?: boolean
+  status?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
@@ -686,6 +754,8 @@ export type ProviderProfileSelectUpdateManyAndReturn<ExtArgs extends runtime.Typ
   cuisineType?: boolean
   address?: boolean
   isOpen?: boolean
+  phone?: boolean
+  status?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
@@ -700,11 +770,13 @@ export type ProviderProfileSelectScalar = {
   cuisineType?: boolean
   address?: boolean
   isOpen?: boolean
+  phone?: boolean
+  status?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type ProviderProfileOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "userId" | "restaurantName" | "description" | "bannerImage" | "cuisineType" | "address" | "isOpen" | "createdAt" | "updatedAt", ExtArgs["result"]["providerProfile"]>
+export type ProviderProfileOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "userId" | "restaurantName" | "description" | "bannerImage" | "cuisineType" | "address" | "isOpen" | "phone" | "status" | "createdAt" | "updatedAt", ExtArgs["result"]["providerProfile"]>
 export type ProviderProfileInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   meals?: boolean | Prisma.ProviderProfile$mealsArgs<ExtArgs>
@@ -732,6 +804,8 @@ export type $ProviderProfilePayload<ExtArgs extends runtime.Types.Extensions.Int
     cuisineType: string | null
     address: string | null
     isOpen: boolean
+    phone: string
+    status: $Enums.ProviderStatus
     createdAt: Date
     updatedAt: Date
   }, ExtArgs["result"]["providerProfile"]>
@@ -1167,6 +1241,8 @@ export interface ProviderProfileFieldRefs {
   readonly cuisineType: Prisma.FieldRef<"ProviderProfile", 'String'>
   readonly address: Prisma.FieldRef<"ProviderProfile", 'String'>
   readonly isOpen: Prisma.FieldRef<"ProviderProfile", 'Boolean'>
+  readonly phone: Prisma.FieldRef<"ProviderProfile", 'String'>
+  readonly status: Prisma.FieldRef<"ProviderProfile", 'ProviderStatus'>
   readonly createdAt: Prisma.FieldRef<"ProviderProfile", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"ProviderProfile", 'DateTime'>
 }

@@ -231,6 +231,8 @@ export const ProviderProfileScalarFieldEnum = {
   cuisineType: 'cuisineType',
   address: 'address',
   isOpen: 'isOpen',
+  phone: 'phone',
+  status: 'status',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const

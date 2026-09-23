@@ -17,6 +17,5 @@ userRoutes.get("/:id/details", requireAuth, requireRole(Role.ADMIN), validateReq
 
 // Get My Profile / Current User Profile
 userRoutes.get("/current/profile", requireAuth, currentUserProfile)
-// Change User Status / Block-Unblock API (Admin Specific)
 
 export default userRoutes; 

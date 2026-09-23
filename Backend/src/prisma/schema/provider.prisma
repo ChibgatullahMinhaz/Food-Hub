@@ -1,17 +1,21 @@
 model ProviderProfile {
-  id             String   @id @default(cuid())
-  userId         String   @unique
-  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id             String         @id @default(cuid())
+  userId         String         @unique
+  user           User           @relation(fields: [userId], references: [id], onDelete: Cascade)
   restaurantName String
-  description    String?  @db.Text
+  description    String?        @db.Text
   bannerImage    String?
   cuisineType    String?
   address        String?
-  isOpen         Boolean  @default(true)
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
+  isOpen         Boolean        @default(true)
+  phone          String
+  status         ProviderStatus @default(PENDING)
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
 
   meals Meal[]
 
   @@map("providerProfile")
 }
+
+

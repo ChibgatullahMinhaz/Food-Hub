@@ -1,4 +1,3 @@
-
 generator client {
   provider = "prisma-client"
   output   = "../generated/prisma"
@@ -26,4 +25,10 @@ enum OrderStatus {
   READY
   DELIVERED
   CANCELLED
+}
+
+enum ProviderStatus {
+  PENDING
+  APPROVED
+  REJECTED
 }
