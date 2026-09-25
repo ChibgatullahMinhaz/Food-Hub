@@ -3,6 +3,7 @@ import { catchAsync } from "@/utils/catchAsync";
 import { sendResponse } from "@/utils/sendResponse";
 import httpStatus from "http-status";
 import * as cartService from "./cart.service";
+import ApiError from "@/errors/ApiError";
 
 export const addToCart: RequestHandler = catchAsync(async (req, res) => {
   const userId = req.user!.id;
@@ -31,6 +32,9 @@ export const getMyCart: RequestHandler = catchAsync(async (req, res) => {
 export const updateCartItemQuantity: RequestHandler = catchAsync(async (req, res) => {
   const userId = req.user!.id;
   const { itemId } = req.params;
+  if (!itemId || typeof itemId !== "string") {
+    throw new ApiError(httpStatus.BAD_REQUEST, "Invalid Id Format !")
+  }
   const result = await cartService.updateCartItemQuantity(userId, itemId, req.body);
 
   sendResponse(res, {
@@ -44,6 +48,9 @@ export const updateCartItemQuantity: RequestHandler = catchAsync(async (req, res
 export const removeCartItem: RequestHandler = catchAsync(async (req, res) => {
   const userId = req.user!.id;
   const { itemId } = req.params;
+  if (!itemId || typeof itemId !== "string") {
+    throw new ApiError(httpStatus.BAD_REQUEST, "Invalid Id Format !")
+  }
   const result = await cartService.removeCartItem(userId, itemId);
 
   sendResponse(res, {

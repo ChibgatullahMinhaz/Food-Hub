@@ -17,7 +17,15 @@ export const env = {
         PASSWORD: process.env.ADMIN_PASSWORD || "",
         NAME: process.env.ADMIN_NAME || "Admin User",
     },
-   
+    R2: {
+        REGION: process.env.R2_REGION || 'auto',
+        ENDPOINT: process.env.R2_ENDPOINT || '',
+        PUBLIC_URL: process.env.R2_PUBLIC_URL || '',
+        ACCESS_KEY_ID: process.env.R2_ACCESS_KEY_ID || '',
+        SECRET_ACCESS_KEY: process.env.R2_SECRET_ACCESS_KEY || '',
+        BUCKET: process.env.R2_BUCKET || '',
+    },
+
 } as const;
 
 if (!env.DATABASE_URL && env.NODE_ENV === "production") {

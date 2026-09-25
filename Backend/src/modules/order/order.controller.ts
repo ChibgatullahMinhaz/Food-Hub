@@ -5,6 +5,7 @@ import httpStatus from "http-status";
 import * as orderService from "./order.service";
 import { Role } from "@/prisma/generated/prisma/enums";
 import type { TGetOrdersQueryInput } from "./order.validation";
+import ApiError from "@/errors/ApiError";
 
 export const createOrder: RequestHandler = catchAsync(async (req, res) => {
   const userId = req.user!.id;
@@ -52,7 +53,9 @@ export const getOrderById: RequestHandler = catchAsync(async (req, res) => {
   const { id } = req.params;
   const userId = req.user!.id;
   const isAdmin = req.user?.role === Role.ADMIN;
-
+  if (!id || typeof id !== "string") {
+    throw new ApiError(httpStatus.BAD_REQUEST, "Invalid Id Format !")
+  }
   const result = await orderService.getOrderById(id, userId, isAdmin);
 
   sendResponse(res, {
@@ -67,7 +70,9 @@ export const updateOrderStatus: RequestHandler = catchAsync(async (req, res) => 
   const { id } = req.params;
   const userId = req.user!.id;
   const isAdmin = req.user?.role === Role.ADMIN;
-
+  if (!id || typeof id !== "string") {
+    throw new ApiError(httpStatus.BAD_REQUEST, "Invalid Id Format !")
+  }
   const result = await orderService.updateOrderStatus(
     id,
     userId,
@@ -86,7 +91,9 @@ export const updateOrderStatus: RequestHandler = catchAsync(async (req, res) => 
 export const cancelOrder: RequestHandler = catchAsync(async (req, res) => {
   const { id } = req.params;
   const userId = req.user!.id;
-
+  if (!id || typeof id !== "string") {
+    throw new ApiError(httpStatus.BAD_REQUEST, "Invalid Id Format !")
+  }
   const result = await orderService.cancelOrder(id, userId);
 
   sendResponse(res, {
