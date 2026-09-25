@@ -11,7 +11,8 @@
     "db:studio": "prisma studio",
     "db:push": "prisma db push",
     "dev": "tsx watch src/server.ts",
-    "build": "tsup src/server.ts --format esm"
+    "build": "tsup src/server.ts --format esm --clean",
+    "start": "node dist/server.js"
   },
   "keywords": [],
   "author": "",
