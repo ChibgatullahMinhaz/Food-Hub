@@ -114,9 +114,6 @@ export const getAllProviders = async (query: GetProviderQueryInput) => {
         const nextItem = providers.pop();
         nextCursor = nextItem?.id || null;
     }
-
-
-
     return {
         meta: {
 
@@ -127,3 +124,49 @@ export const getAllProviders = async (query: GetProviderQueryInput) => {
         data: providers,
     };
 } 
+
+export const getProviderById = async (id: string) => {
+  const provider = await prisma.providerProfile.findUnique({
+    where: { id },
+    include: {
+      user: {
+        select: {
+          id: true,
+          name: true,
+          email: true,
+          image: true,
+          status: true,
+        },
+      },
+      meals: {
+        where: {
+          isAvailable: true,
+        },
+        take: 10,
+        select: {
+          id: true,
+          name: true,
+          price: true,
+          image: true,
+          isVegetarian: true,
+          category: {
+            select: {
+              name: true,
+            },
+          },
+        },
+      },
+      _count: {
+        select: {
+          meals: true,
+        },
+      },
+    },
+  });
+
+  if (!provider) {
+    throw new ApiError(httpStatus.NOT_FOUND, "Provider profile not found");
+  }
+
+  return provider;
+};

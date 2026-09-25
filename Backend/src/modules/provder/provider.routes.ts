@@ -1,8 +1,8 @@
 import { Router } from "express";
 import { requireAuth, requireRole } from "@/middlewares/auth.middleware";
 import { validateRequest } from "@/middlewares/validateRequest";
-import { applyProviderSchema, getProviderQuerySchema, updateProviderStatusSchema } from "./provider.validation";
-import { applyForProvider, changeProviderStatus, getAllProviders } from "./provider.controller";
+import { applyProviderSchema, getProviderQuerySchema, providerIdParamSchema, updateProviderStatusSchema } from "./provider.validation";
+import { applyForProvider, changeProviderStatus, getAllProviders, getProviderById } from "./provider.controller";
 import { Role } from "@/prisma/generated/prisma/enums";
 
 const providerRoutes: Router = Router();
@@ -25,5 +25,9 @@ providerRoutes.patch(
 
 providerRoutes.get("/all/provider", requireAuth, requireRole(Role.ADMIN),
     validateRequest(getProviderQuerySchema), getAllProviders)
-    
+providerRoutes.get(
+    "/:id",
+    validateRequest(providerIdParamSchema),
+    getProviderById
+);
 export default providerRoutes;

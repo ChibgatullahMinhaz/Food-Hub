@@ -38,15 +38,31 @@ export const changeProviderStatus: RequestHandler = catchAsync(async (req, res) 
     });
 });
 
-export const getAllProviders:RequestHandler = catchAsync(async (req, res) => {
+export const getAllProviders: RequestHandler = catchAsync(async (req, res) => {
     const query = req.query as unknown as GetProviderQueryInput;
-  const result = await providerService.getAllProviders(query);
+    const result = await providerService.getAllProviders(query);
 
-  sendResponse(res, {
-    statusCode: httpStatus.OK,
-    success: true,
-    message: "Providers fetched successfully",
-    data: result.data,
-    meta: result.meta,
-  });
+    sendResponse(res, {
+        statusCode: httpStatus.OK,
+        success: true,
+        message: "Providers fetched successfully",
+        data: result.data,
+        meta: result.meta,
+    });
+});
+
+
+export const getProviderById: RequestHandler = catchAsync(async (req, res) => {
+    const { id } = req.params;
+    if (!id || typeof id !== 'string') {
+        throw new ApiError(httpStatus.BAD_REQUEST, "Invalid or missing User ID");
+    }
+    const result = await providerService.getProviderById(id);
+
+    sendResponse(res, {
+        statusCode: httpStatus.OK,
+        success: true,
+        message: "Provider profile retrieved successfully",
+        data: result,
+    });
 });

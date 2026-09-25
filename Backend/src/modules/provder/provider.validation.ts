@@ -40,5 +40,13 @@ export const getProviderQuerySchema = z.object({
   }),
 });
 
+
+export const providerIdParamSchema = z.object({
+  params: z.object({
+    id: z.string().cuid("Invalid Provider ID"),
+  }),
+});
+
+export type TProviderIdParamInput = z.infer<typeof providerIdParamSchema>["params"];
 // Types Export
 export type GetProviderQueryInput = z.infer<typeof getProviderQuerySchema>["query"];
