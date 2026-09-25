@@ -17,5 +17,3 @@ model ProviderProfile {
 
   @@map("providerProfile")
 }
-
-

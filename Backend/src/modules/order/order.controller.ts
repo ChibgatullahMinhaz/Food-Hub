@@ -1,10 +1,10 @@
-import { RequestHandler } from "express";
+import type { RequestHandler } from "express";
 import { catchAsync } from "@/utils/catchAsync";
 import { sendResponse } from "@/utils/sendResponse";
 import httpStatus from "http-status";
 import * as orderService from "./order.service";
-import { TGetOrdersQueryInput } from "./order.validation";
 import { Role } from "@/prisma/generated/prisma/enums";
+import type { TGetOrdersQueryInput } from "./order.validation";
 
 export const createOrder: RequestHandler = catchAsync(async (req, res) => {
   const userId = req.user!.id;

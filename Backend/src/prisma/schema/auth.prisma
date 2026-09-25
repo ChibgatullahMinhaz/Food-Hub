@@ -1,7 +1,7 @@
 model User {
   id            String     @id @default(cuid())
   name          String
-  email         String     
+  email         String
   emailVerified Boolean    @default(false)
   image         String?
   role          Role       @default(CUSTOMER)
@@ -18,7 +18,7 @@ model User {
   orders          Order[]
   reviews         Review[]
   cart            Cart?
-  
+
   @@unique([email])
   @@map("user")
 }
@@ -26,7 +26,7 @@ model User {
 model Session {
   id        String   @id @default(cuid())
   expiresAt DateTime
-  token     String   
+  token     String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   ipAddress String?
@@ -34,7 +34,6 @@ model Session {
   userId    String
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  
   @@unique([token])
   @@index([userId])
   @@map("session")

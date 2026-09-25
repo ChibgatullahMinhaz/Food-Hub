@@ -1,4 +1,3 @@
-
 model Meal {
   id           String          @id @default(cuid())
   name         String

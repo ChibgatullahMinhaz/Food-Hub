@@ -7,9 +7,6 @@ export const createCategorySchema = z.object({
     }),
 });
 
-import { z } from "zod";
-
-
 export const updateCategorySchema = z.object({
     params: z.object({
         id: z.string().cuid("Invalid Category ID"),
