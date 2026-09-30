@@ -1,13 +1,15 @@
 import { env } from '@/config/env';
-import { S3Client, PutObjectCommand, DeleteObjectCommand } from '@aws-sdk/client-s3';
+import {
+  S3Client,
+  PutObjectCommand,
+  GetObjectCommand,
+  DeleteObjectCommand,
+} from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 
 const s3 = new S3Client({
   region: env.R2.REGION || 'auto',
-  ...(env.R2.ENDPOINT || env.R2.PUBLIC_URL
-    ? { endpoint: env.R2.ENDPOINT || env.R2.PUBLIC_URL }
-    : {}),
-  // avoids virtual-hosted-style host mismatches that break presigned signatures on R2
+  ...(env.R2.ENDPOINT ? { endpoint: env.R2.ENDPOINT } : {}),
   forcePathStyle: true,
   credentials: {
     accessKeyId: env.R2.ACCESS_KEY_ID || '',
@@ -15,19 +17,21 @@ const s3 = new S3Client({
   },
 });
 
-// the S3 API endpoint is private; only a real r2.dev/custom domain is publicly browsable
-export function getPublicUrlForKey(key: string) {
-  const hasConfiguredPublicUrl = env.R2.PUBLIC_URL && !/[<>]/.test(env.R2.PUBLIC_URL);
 
-  if (hasConfiguredPublicUrl) {
-    return `${env.R2.PUBLIC_URL.replace(/\/$/, '')}/${key}`;
-  }
+
+export function normalizeKey(keyOrUrl: string) {
+  if (!keyOrUrl) return keyOrUrl;
+
+  const cleanUrl = keyOrUrl.split('?')[0] || keyOrUrl;
 
   if (env.R2.ENDPOINT && env.R2.BUCKET) {
-    return `${env.R2.ENDPOINT.replace(/\/$/, '')}/${env.R2.BUCKET}/${key}`;
+    const prefix = `${env.R2.ENDPOINT.replace(/\/$/, '')}/${env.R2.BUCKET}`;
+    if (cleanUrl.startsWith(prefix)) {
+      return cleanUrl.replace(prefix, '').replace(/^\//, '');
+    }
   }
 
-  return key;
+  return cleanUrl;
 }
 
 export async function uploadBufferToR2(key: string, body: Buffer, contentType = 'application/octet-stream') {
@@ -43,10 +47,9 @@ export async function uploadBufferToR2(key: string, body: Buffer, contentType = 
     })
   );
 
-  return getPublicUrlForKey(key);
+  return key;
 }
 
-// server signs the request with its own R2 credentials; the client only receives a short-lived URL
 export async function getPresignedUploadUrl(key: string, contentType: string, expiresInSeconds = 300) {
   const bucket = env.R2.BUCKET;
   if (!bucket) throw new Error('R2 bucket is not configured');
@@ -59,26 +62,23 @@ export async function getPresignedUploadUrl(key: string, contentType: string, ex
 
   const uploadUrl = await getSignedUrl(s3, command, { expiresIn: expiresInSeconds });
 
-  return { uploadUrl, publicUrl: getPublicUrlForKey(key), key };
+  return { uploadUrl, key };
 }
 
-function normalizeKey(keyOrUrl: string) {
+export async function getPresignedDownloadUrl(keyOrUrl: string, expiresInSeconds = 3600) {
   if (!keyOrUrl) return keyOrUrl;
 
-  // If a full public URL is provided, strip the public prefix
-  if (env.R2.PUBLIC_URL && keyOrUrl.startsWith(env.R2.PUBLIC_URL)) {
-    return keyOrUrl.replace(env.R2.PUBLIC_URL.replace(/\/$/, ''), '').replace(/^\//, '');
-  }
+  const bucket = env.R2.BUCKET;
+  if (!bucket) throw new Error('R2 bucket is not configured');
 
-  // If endpoint + bucket form is provided, strip that
-  if (env.R2.ENDPOINT && env.R2.BUCKET) {
-    const prefix = `${env.R2.ENDPOINT.replace(/\/$/, '')}/${env.R2.BUCKET}`;
-    if (keyOrUrl.startsWith(prefix)) {
-      return keyOrUrl.replace(prefix, '').replace(/^\//, '');
-    }
-  }
+  const key = normalizeKey(keyOrUrl);
 
-  return keyOrUrl;
+  const command = new GetObjectCommand({
+    Bucket: bucket,
+    Key: key,
+  });
+
+  return await getSignedUrl(s3, command, { expiresIn: expiresInSeconds });
 }
 
 export async function deleteFromR2(keyOrUrl: string) {
@@ -97,4 +97,10 @@ export async function deleteFromR2(keyOrUrl: string) {
   return true;
 }
 
-export default { uploadBufferToR2, deleteFromR2 };
+export default {
+  uploadBufferToR2,
+  getPresignedUploadUrl,
+  getPresignedDownloadUrl,
+  deleteFromR2,
+  normalizeKey,
+};

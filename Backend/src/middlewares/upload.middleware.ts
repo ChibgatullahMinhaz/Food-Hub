@@ -19,7 +19,7 @@ const MAX_IMAGE_SIZE_BYTES = 5 * 1024 * 1024; // 5MB per file
 function imageFileFilter(
     _req: unknown,
     file: Express.Multer.File,
-    cb: (error: Error | null, acceptFile?: boolean) => void
+    cb: multer.FileFilterCallback
 ) {
     const ext = path.extname(file.originalname).toLowerCase();
 

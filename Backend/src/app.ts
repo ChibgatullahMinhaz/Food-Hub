@@ -30,9 +30,11 @@ app.use(express.urlencoded({ limit: "50mb", extended: true }));
 // Root Health-Check Route
 app.use("/api", entryRoutes);
 
-// Global Error Handler
-app.use(globalErrorHandler);
+
 // 404 Catch-All Handler
 app.use(notFound);
+
+// Global Error Handler
+app.use(globalErrorHandler);
 
 export default app;
