@@ -111,8 +111,12 @@ export const getCategoryById = async (id: string) => {
   if (!category) {
     throw new ApiError(httpStatus.NOT_FOUND, "Category not found");
   }
-
-  return category;
+  return {
+    ...category,
+    image: category.image
+      ? await getPresignedDownloadUrl(category.image)
+      : null,
+  };
 };
 
 export const updateCategory = async (
@@ -120,7 +124,6 @@ export const updateCategory = async (
   payload: TUpdateCategoryInput,
   file?: Express.Multer.File,
 ) => {
-  console.log(file)
   const existingCategory = await prisma.category.findUnique({ where: { id } });
   if (!existingCategory) {
     throw new ApiError(httpStatus.NOT_FOUND, "Category not found");

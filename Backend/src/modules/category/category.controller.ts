@@ -45,7 +45,6 @@ export const getCategoryById: RequestHandler = catchAsync(async (req, res) => {
 export const updateCategory: RequestHandler = catchAsync(async (req, res) => {
     const { id } = req.params;
     if (!id || typeof id !== "string") throw new ApiError(httpStatus.BAD_REQUEST, "invalid ID Format !")
-        console.log(req.file)
 
     const result = await categoryService.updateCategory(id, req.body, req.file);
 
