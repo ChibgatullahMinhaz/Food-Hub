@@ -183,7 +183,7 @@ export const MealScalarFieldEnum = {
   name: 'name',
   description: 'description',
   price: 'price',
-  image: 'image',
+  images: 'images',
   isAvailable: 'isAvailable',
   isVegetarian: 'isVegetarian',
   dietaryType: 'dietaryType',

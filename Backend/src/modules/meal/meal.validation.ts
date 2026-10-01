@@ -3,15 +3,34 @@ import { z } from "zod";
 export const createMealSchema = z.object({
   body: z.object({
     name: z.string().min(2, "Meal name must be at least 2 characters"),
-    description: z.string().min(10, "Description must be at least 10 characters"),
+    description: z
+      .string()
+      .min(10, "Description must be at least 10 characters"),
     price: z.number().positive("Price must be a positive number"),
-    image: z.string().url("Invalid image URL").optional(),
     isAvailable: z.boolean().optional().default(true),
     isVegetarian: z.boolean().optional().default(false),
     dietaryType: z.string().optional(),
     categoryId: z.string().cuid("Invalid Category ID"),
-    providerId: z.string().cuid("Invalid Provider ID").optional(), 
+    providerId: z.string().cuid("Invalid Provider ID").optional(),
   }),
+  files: z
+    .array(
+      z.object({
+        fieldname: z.string(),
+        originalname: z.string(),
+        encoding: z.string(),
+        mimetype: z
+          .string()
+          .refine(
+            (type) => type.startsWith("image/"),
+            "Only image files are allowed",
+          ),
+        buffer: z.instanceof(Buffer),
+        size: z.number(),
+      }),
+    )
+    .min(1, "At least one image is required")
+    .optional(),
 });
 
 export const updateMealSchema = z.object({
@@ -19,16 +38,40 @@ export const updateMealSchema = z.object({
     id: z.string().cuid("Invalid Meal ID"),
   }),
   body: z.object({
-    name: z.string().min(2, "Meal name must be at least 2 characters").optional(),
-    description: z.string().min(10, "Description must be at least 10 characters").optional(),
+    name: z
+      .string()
+      .min(2, "Meal name must be at least 2 characters")
+      .optional(),
+    description: z
+      .string()
+      .min(10, "Description must be at least 10 characters")
+      .optional(),
     price: z.number().positive("Price must be a positive number").optional(),
-    image: z.string().url("Invalid image URL").optional(),
+    // image: z.string().url("Invalid image URL").optional(),
     isAvailable: z.boolean().optional(),
     isVegetarian: z.boolean().optional(),
     dietaryType: z.string().optional(),
     categoryId: z.string().cuid("Invalid Category ID").optional(),
     providerId: z.string().cuid("Invalid Provider ID").optional(),
   }),
+  files: z
+    .array(
+      z.object({
+        fieldname: z.string(),
+        originalname: z.string(),
+        encoding: z.string(),
+        mimetype: z
+          .string()
+          .refine(
+            (type) => type.startsWith("image/"),
+            "Only image files are allowed",
+          ),
+        buffer: z.instanceof(Buffer),
+        size: z.number(),
+      }),
+    )
+    .min(1, "At least one image is required")
+    .optional(),
 });
 
 export const mealIdParamSchema = z.object({
@@ -67,7 +110,10 @@ export const getMealQuerySchema = z.object({
       .string()
       .optional()
       .transform((val) => (val ? parseFloat(val) : undefined)),
-    sortBy: z.enum(["price", "createdAt", "name"]).optional().default("createdAt"),
+    sortBy: z
+      .enum(["price", "createdAt", "name"])
+      .optional()
+      .default("createdAt"),
     sortOrder: z.enum(["asc", "desc"]).optional().default("desc"),
   }),
 });

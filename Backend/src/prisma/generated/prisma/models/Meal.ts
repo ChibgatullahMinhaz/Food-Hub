@@ -39,7 +39,6 @@ export type MealMinAggregateOutputType = {
   name: string | null
   description: string | null
   price: number | null
-  image: string | null
   isAvailable: boolean | null
   isVegetarian: boolean | null
   dietaryType: string | null
@@ -54,7 +53,6 @@ export type MealMaxAggregateOutputType = {
   name: string | null
   description: string | null
   price: number | null
-  image: string | null
   isAvailable: boolean | null
   isVegetarian: boolean | null
   dietaryType: string | null
@@ -69,7 +67,7 @@ export type MealCountAggregateOutputType = {
   name: number
   description: number
   price: number
-  image: number
+  images: number
   isAvailable: number
   isVegetarian: number
   dietaryType: number
@@ -94,7 +92,6 @@ export type MealMinAggregateInputType = {
   name?: true
   description?: true
   price?: true
-  image?: true
   isAvailable?: true
   isVegetarian?: true
   dietaryType?: true
@@ -109,7 +106,6 @@ export type MealMaxAggregateInputType = {
   name?: true
   description?: true
   price?: true
-  image?: true
   isAvailable?: true
   isVegetarian?: true
   dietaryType?: true
@@ -124,7 +120,7 @@ export type MealCountAggregateInputType = {
   name?: true
   description?: true
   price?: true
-  image?: true
+  images?: true
   isAvailable?: true
   isVegetarian?: true
   dietaryType?: true
@@ -226,7 +222,7 @@ export type MealGroupByOutputType = {
   name: string
   description: string
   price: number
-  image: string | null
+  images: string[]
   isAvailable: boolean
   isVegetarian: boolean
   dietaryType: string | null
@@ -264,7 +260,7 @@ export type MealWhereInput = {
   name?: Prisma.StringFilter<"Meal"> | string
   description?: Prisma.StringFilter<"Meal"> | string
   price?: Prisma.FloatFilter<"Meal"> | number
-  image?: Prisma.StringNullableFilter<"Meal"> | string | null
+  images?: Prisma.StringNullableListFilter<"Meal">
   isAvailable?: Prisma.BoolFilter<"Meal"> | boolean
   isVegetarian?: Prisma.BoolFilter<"Meal"> | boolean
   dietaryType?: Prisma.StringNullableFilter<"Meal"> | string | null
@@ -284,7 +280,7 @@ export type MealOrderByWithRelationInput = {
   name?: Prisma.SortOrder
   description?: Prisma.SortOrder
   price?: Prisma.SortOrder
-  image?: Prisma.SortOrderInput | Prisma.SortOrder
+  images?: Prisma.SortOrder
   isAvailable?: Prisma.SortOrder
   isVegetarian?: Prisma.SortOrder
   dietaryType?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -307,7 +303,7 @@ export type MealWhereUniqueInput = Prisma.AtLeast<{
   name?: Prisma.StringFilter<"Meal"> | string
   description?: Prisma.StringFilter<"Meal"> | string
   price?: Prisma.FloatFilter<"Meal"> | number
-  image?: Prisma.StringNullableFilter<"Meal"> | string | null
+  images?: Prisma.StringNullableListFilter<"Meal">
   isAvailable?: Prisma.BoolFilter<"Meal"> | boolean
   isVegetarian?: Prisma.BoolFilter<"Meal"> | boolean
   dietaryType?: Prisma.StringNullableFilter<"Meal"> | string | null
@@ -327,7 +323,7 @@ export type MealOrderByWithAggregationInput = {
   name?: Prisma.SortOrder
   description?: Prisma.SortOrder
   price?: Prisma.SortOrder
-  image?: Prisma.SortOrderInput | Prisma.SortOrder
+  images?: Prisma.SortOrder
   isAvailable?: Prisma.SortOrder
   isVegetarian?: Prisma.SortOrder
   dietaryType?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -350,7 +346,7 @@ export type MealScalarWhereWithAggregatesInput = {
   name?: Prisma.StringWithAggregatesFilter<"Meal"> | string
   description?: Prisma.StringWithAggregatesFilter<"Meal"> | string
   price?: Prisma.FloatWithAggregatesFilter<"Meal"> | number
-  image?: Prisma.StringNullableWithAggregatesFilter<"Meal"> | string | null
+  images?: Prisma.StringNullableListFilter<"Meal">
   isAvailable?: Prisma.BoolWithAggregatesFilter<"Meal"> | boolean
   isVegetarian?: Prisma.BoolWithAggregatesFilter<"Meal"> | boolean
   dietaryType?: Prisma.StringNullableWithAggregatesFilter<"Meal"> | string | null
@@ -365,7 +361,7 @@ export type MealCreateInput = {
   name: string
   description: string
   price: number
-  image?: string | null
+  images?: Prisma.MealCreateimagesInput | string[]
   isAvailable?: boolean
   isVegetarian?: boolean
   dietaryType?: string | null
@@ -383,7 +379,7 @@ export type MealUncheckedCreateInput = {
   name: string
   description: string
   price: number
-  image?: string | null
+  images?: Prisma.MealCreateimagesInput | string[]
   isAvailable?: boolean
   isVegetarian?: boolean
   dietaryType?: string | null
@@ -401,7 +397,7 @@ export type MealUpdateInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.StringFieldUpdateOperationsInput | string
   price?: Prisma.FloatFieldUpdateOperationsInput | number
-  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  images?: Prisma.MealUpdateimagesInput | string[]
   isAvailable?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isVegetarian?: Prisma.BoolFieldUpdateOperationsInput | boolean
   dietaryType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -419,7 +415,7 @@ export type MealUncheckedUpdateInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.StringFieldUpdateOperationsInput | string
   price?: Prisma.FloatFieldUpdateOperationsInput | number
-  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  images?: Prisma.MealUpdateimagesInput | string[]
   isAvailable?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isVegetarian?: Prisma.BoolFieldUpdateOperationsInput | boolean
   dietaryType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -437,7 +433,7 @@ export type MealCreateManyInput = {
   name: string
   description: string
   price: number
-  image?: string | null
+  images?: Prisma.MealCreateimagesInput | string[]
   isAvailable?: boolean
   isVegetarian?: boolean
   dietaryType?: string | null
@@ -452,7 +448,7 @@ export type MealUpdateManyMutationInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.StringFieldUpdateOperationsInput | string
   price?: Prisma.FloatFieldUpdateOperationsInput | number
-  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  images?: Prisma.MealUpdateimagesInput | string[]
   isAvailable?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isVegetarian?: Prisma.BoolFieldUpdateOperationsInput | boolean
   dietaryType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -465,7 +461,7 @@ export type MealUncheckedUpdateManyInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.StringFieldUpdateOperationsInput | string
   price?: Prisma.FloatFieldUpdateOperationsInput | number
-  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  images?: Prisma.MealUpdateimagesInput | string[]
   isAvailable?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isVegetarian?: Prisma.BoolFieldUpdateOperationsInput | boolean
   dietaryType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -490,12 +486,20 @@ export type MealOrderByRelationAggregateInput = {
   _count?: Prisma.SortOrder
 }
 
+export type StringNullableListFilter<$PrismaModel = never> = {
+  equals?: string[] | Prisma.ListStringFieldRefInput<$PrismaModel> | null
+  has?: string | Prisma.StringFieldRefInput<$PrismaModel> | null
+  hasEvery?: string[] | Prisma.ListStringFieldRefInput<$PrismaModel>
+  hasSome?: string[] | Prisma.ListStringFieldRefInput<$PrismaModel>
+  isEmpty?: boolean
+}
+
 export type MealCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
   description?: Prisma.SortOrder
   price?: Prisma.SortOrder
-  image?: Prisma.SortOrder
+  images?: Prisma.SortOrder
   isAvailable?: Prisma.SortOrder
   isVegetarian?: Prisma.SortOrder
   dietaryType?: Prisma.SortOrder
@@ -514,7 +518,6 @@ export type MealMaxOrderByAggregateInput = {
   name?: Prisma.SortOrder
   description?: Prisma.SortOrder
   price?: Prisma.SortOrder
-  image?: Prisma.SortOrder
   isAvailable?: Prisma.SortOrder
   isVegetarian?: Prisma.SortOrder
   dietaryType?: Prisma.SortOrder
@@ -529,7 +532,6 @@ export type MealMinOrderByAggregateInput = {
   name?: Prisma.SortOrder
   description?: Prisma.SortOrder
   price?: Prisma.SortOrder
-  image?: Prisma.SortOrder
   isAvailable?: Prisma.SortOrder
   isVegetarian?: Prisma.SortOrder
   dietaryType?: Prisma.SortOrder
@@ -599,12 +601,21 @@ export type MealUncheckedUpdateManyWithoutCategoryNestedInput = {
   deleteMany?: Prisma.MealScalarWhereInput | Prisma.MealScalarWhereInput[]
 }
 
+export type MealCreateimagesInput = {
+  set: string[]
+}
+
 export type FloatFieldUpdateOperationsInput = {
   set?: number
   increment?: number
   decrement?: number
   multiply?: number
   divide?: number
+}
+
+export type MealUpdateimagesInput = {
+  set?: string[]
+  push?: string | string[]
 }
 
 export type MealCreateNestedOneWithoutOrderItemsInput = {
@@ -682,7 +693,7 @@ export type MealCreateWithoutCartItemsInput = {
   name: string
   description: string
   price: number
-  image?: string | null
+  images?: Prisma.MealCreateimagesInput | string[]
   isAvailable?: boolean
   isVegetarian?: boolean
   dietaryType?: string | null
@@ -699,7 +710,7 @@ export type MealUncheckedCreateWithoutCartItemsInput = {
   name: string
   description: string
   price: number
-  image?: string | null
+  images?: Prisma.MealCreateimagesInput | string[]
   isAvailable?: boolean
   isVegetarian?: boolean
   dietaryType?: string | null
@@ -732,7 +743,7 @@ export type MealUpdateWithoutCartItemsInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.StringFieldUpdateOperationsInput | string
   price?: Prisma.FloatFieldUpdateOperationsInput | number
-  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  images?: Prisma.MealUpdateimagesInput | string[]
   isAvailable?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isVegetarian?: Prisma.BoolFieldUpdateOperationsInput | boolean
   dietaryType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -749,7 +760,7 @@ export type MealUncheckedUpdateWithoutCartItemsInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.StringFieldUpdateOperationsInput | string
   price?: Prisma.FloatFieldUpdateOperationsInput | number
-  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  images?: Prisma.MealUpdateimagesInput | string[]
   isAvailable?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isVegetarian?: Prisma.BoolFieldUpdateOperationsInput | boolean
   dietaryType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -766,7 +777,7 @@ export type MealCreateWithoutCategoryInput = {
   name: string
   description: string
   price: number
-  image?: string | null
+  images?: Prisma.MealCreateimagesInput | string[]
   isAvailable?: boolean
   isVegetarian?: boolean
   dietaryType?: string | null
@@ -783,7 +794,7 @@ export type MealUncheckedCreateWithoutCategoryInput = {
   name: string
   description: string
   price: number
-  image?: string | null
+  images?: Prisma.MealCreateimagesInput | string[]
   isAvailable?: boolean
   isVegetarian?: boolean
   dietaryType?: string | null
@@ -829,7 +840,7 @@ export type MealScalarWhereInput = {
   name?: Prisma.StringFilter<"Meal"> | string
   description?: Prisma.StringFilter<"Meal"> | string
   price?: Prisma.FloatFilter<"Meal"> | number
-  image?: Prisma.StringNullableFilter<"Meal"> | string | null
+  images?: Prisma.StringNullableListFilter<"Meal">
   isAvailable?: Prisma.BoolFilter<"Meal"> | boolean
   isVegetarian?: Prisma.BoolFilter<"Meal"> | boolean
   dietaryType?: Prisma.StringNullableFilter<"Meal"> | string | null
@@ -844,7 +855,7 @@ export type MealCreateWithoutOrderItemsInput = {
   name: string
   description: string
   price: number
-  image?: string | null
+  images?: Prisma.MealCreateimagesInput | string[]
   isAvailable?: boolean
   isVegetarian?: boolean
   dietaryType?: string | null
@@ -861,7 +872,7 @@ export type MealUncheckedCreateWithoutOrderItemsInput = {
   name: string
   description: string
   price: number
-  image?: string | null
+  images?: Prisma.MealCreateimagesInput | string[]
   isAvailable?: boolean
   isVegetarian?: boolean
   dietaryType?: string | null
@@ -894,7 +905,7 @@ export type MealUpdateWithoutOrderItemsInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.StringFieldUpdateOperationsInput | string
   price?: Prisma.FloatFieldUpdateOperationsInput | number
-  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  images?: Prisma.MealUpdateimagesInput | string[]
   isAvailable?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isVegetarian?: Prisma.BoolFieldUpdateOperationsInput | boolean
   dietaryType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -911,7 +922,7 @@ export type MealUncheckedUpdateWithoutOrderItemsInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.StringFieldUpdateOperationsInput | string
   price?: Prisma.FloatFieldUpdateOperationsInput | number
-  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  images?: Prisma.MealUpdateimagesInput | string[]
   isAvailable?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isVegetarian?: Prisma.BoolFieldUpdateOperationsInput | boolean
   dietaryType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -928,7 +939,7 @@ export type MealCreateWithoutProviderInput = {
   name: string
   description: string
   price: number
-  image?: string | null
+  images?: Prisma.MealCreateimagesInput | string[]
   isAvailable?: boolean
   isVegetarian?: boolean
   dietaryType?: string | null
@@ -945,7 +956,7 @@ export type MealUncheckedCreateWithoutProviderInput = {
   name: string
   description: string
   price: number
-  image?: string | null
+  images?: Prisma.MealCreateimagesInput | string[]
   isAvailable?: boolean
   isVegetarian?: boolean
   dietaryType?: string | null
@@ -988,7 +999,7 @@ export type MealCreateWithoutReviewsInput = {
   name: string
   description: string
   price: number
-  image?: string | null
+  images?: Prisma.MealCreateimagesInput | string[]
   isAvailable?: boolean
   isVegetarian?: boolean
   dietaryType?: string | null
@@ -1005,7 +1016,7 @@ export type MealUncheckedCreateWithoutReviewsInput = {
   name: string
   description: string
   price: number
-  image?: string | null
+  images?: Prisma.MealCreateimagesInput | string[]
   isAvailable?: boolean
   isVegetarian?: boolean
   dietaryType?: string | null
@@ -1038,7 +1049,7 @@ export type MealUpdateWithoutReviewsInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.StringFieldUpdateOperationsInput | string
   price?: Prisma.FloatFieldUpdateOperationsInput | number
-  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  images?: Prisma.MealUpdateimagesInput | string[]
   isAvailable?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isVegetarian?: Prisma.BoolFieldUpdateOperationsInput | boolean
   dietaryType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1055,7 +1066,7 @@ export type MealUncheckedUpdateWithoutReviewsInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.StringFieldUpdateOperationsInput | string
   price?: Prisma.FloatFieldUpdateOperationsInput | number
-  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  images?: Prisma.MealUpdateimagesInput | string[]
   isAvailable?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isVegetarian?: Prisma.BoolFieldUpdateOperationsInput | boolean
   dietaryType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1072,7 +1083,7 @@ export type MealCreateManyCategoryInput = {
   name: string
   description: string
   price: number
-  image?: string | null
+  images?: Prisma.MealCreateimagesInput | string[]
   isAvailable?: boolean
   isVegetarian?: boolean
   dietaryType?: string | null
@@ -1086,7 +1097,7 @@ export type MealUpdateWithoutCategoryInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.StringFieldUpdateOperationsInput | string
   price?: Prisma.FloatFieldUpdateOperationsInput | number
-  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  images?: Prisma.MealUpdateimagesInput | string[]
   isAvailable?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isVegetarian?: Prisma.BoolFieldUpdateOperationsInput | boolean
   dietaryType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1103,7 +1114,7 @@ export type MealUncheckedUpdateWithoutCategoryInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.StringFieldUpdateOperationsInput | string
   price?: Prisma.FloatFieldUpdateOperationsInput | number
-  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  images?: Prisma.MealUpdateimagesInput | string[]
   isAvailable?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isVegetarian?: Prisma.BoolFieldUpdateOperationsInput | boolean
   dietaryType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1120,7 +1131,7 @@ export type MealUncheckedUpdateManyWithoutCategoryInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.StringFieldUpdateOperationsInput | string
   price?: Prisma.FloatFieldUpdateOperationsInput | number
-  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  images?: Prisma.MealUpdateimagesInput | string[]
   isAvailable?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isVegetarian?: Prisma.BoolFieldUpdateOperationsInput | boolean
   dietaryType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1134,7 +1145,7 @@ export type MealCreateManyProviderInput = {
   name: string
   description: string
   price: number
-  image?: string | null
+  images?: Prisma.MealCreateimagesInput | string[]
   isAvailable?: boolean
   isVegetarian?: boolean
   dietaryType?: string | null
@@ -1148,7 +1159,7 @@ export type MealUpdateWithoutProviderInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.StringFieldUpdateOperationsInput | string
   price?: Prisma.FloatFieldUpdateOperationsInput | number
-  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  images?: Prisma.MealUpdateimagesInput | string[]
   isAvailable?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isVegetarian?: Prisma.BoolFieldUpdateOperationsInput | boolean
   dietaryType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1165,7 +1176,7 @@ export type MealUncheckedUpdateWithoutProviderInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.StringFieldUpdateOperationsInput | string
   price?: Prisma.FloatFieldUpdateOperationsInput | number
-  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  images?: Prisma.MealUpdateimagesInput | string[]
   isAvailable?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isVegetarian?: Prisma.BoolFieldUpdateOperationsInput | boolean
   dietaryType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1182,7 +1193,7 @@ export type MealUncheckedUpdateManyWithoutProviderInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.StringFieldUpdateOperationsInput | string
   price?: Prisma.FloatFieldUpdateOperationsInput | number
-  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  images?: Prisma.MealUpdateimagesInput | string[]
   isAvailable?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isVegetarian?: Prisma.BoolFieldUpdateOperationsInput | boolean
   dietaryType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1245,7 +1256,7 @@ export type MealSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   name?: boolean
   description?: boolean
   price?: boolean
-  image?: boolean
+  images?: boolean
   isAvailable?: boolean
   isVegetarian?: boolean
   dietaryType?: boolean
@@ -1266,7 +1277,7 @@ export type MealSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   name?: boolean
   description?: boolean
   price?: boolean
-  image?: boolean
+  images?: boolean
   isAvailable?: boolean
   isVegetarian?: boolean
   dietaryType?: boolean
@@ -1283,7 +1294,7 @@ export type MealSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   name?: boolean
   description?: boolean
   price?: boolean
-  image?: boolean
+  images?: boolean
   isAvailable?: boolean
   isVegetarian?: boolean
   dietaryType?: boolean
@@ -1300,7 +1311,7 @@ export type MealSelectScalar = {
   name?: boolean
   description?: boolean
   price?: boolean
-  image?: boolean
+  images?: boolean
   isAvailable?: boolean
   isVegetarian?: boolean
   dietaryType?: boolean
@@ -1310,7 +1321,7 @@ export type MealSelectScalar = {
   updatedAt?: boolean
 }
 
-export type MealOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "description" | "price" | "image" | "isAvailable" | "isVegetarian" | "dietaryType" | "providerId" | "categoryId" | "createdAt" | "updatedAt", ExtArgs["result"]["meal"]>
+export type MealOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "description" | "price" | "images" | "isAvailable" | "isVegetarian" | "dietaryType" | "providerId" | "categoryId" | "createdAt" | "updatedAt", ExtArgs["result"]["meal"]>
 export type MealInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   provider?: boolean | Prisma.ProviderProfileDefaultArgs<ExtArgs>
   category?: boolean | Prisma.CategoryDefaultArgs<ExtArgs>
@@ -1342,7 +1353,7 @@ export type $MealPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     name: string
     description: string
     price: number
-    image: string | null
+    images: string[]
     isAvailable: boolean
     isVegetarian: boolean
     dietaryType: string | null
@@ -1782,7 +1793,7 @@ export interface MealFieldRefs {
   readonly name: Prisma.FieldRef<"Meal", 'String'>
   readonly description: Prisma.FieldRef<"Meal", 'String'>
   readonly price: Prisma.FieldRef<"Meal", 'Float'>
-  readonly image: Prisma.FieldRef<"Meal", 'String'>
+  readonly images: Prisma.FieldRef<"Meal", 'String[]'>
   readonly isAvailable: Prisma.FieldRef<"Meal", 'Boolean'>
   readonly isVegetarian: Prisma.FieldRef<"Meal", 'Boolean'>
   readonly dietaryType: Prisma.FieldRef<"Meal", 'String'>

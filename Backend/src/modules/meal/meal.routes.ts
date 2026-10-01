@@ -3,57 +3,52 @@ import { requireAuth, requireRole } from "@/middlewares/auth.middleware";
 import { validateRequest } from "@/middlewares/validateRequest";
 import { Role } from "@/prisma/generated/prisma/enums";
 import {
-    createMealSchema,
-    updateMealSchema,
-    mealIdParamSchema,
-    getMealQuerySchema,
+  createMealSchema,
+  updateMealSchema,
+  mealIdParamSchema,
+  getMealQuerySchema,
 } from "./meal.validation";
 import {
-    createMeal,
-    getAllMeals,
-    getMealById,
-    updateMeal,
-    deleteMeal,
+  createMeal,
+  getAllMeals,
+  getMealById,
+  updateMeal,
+  deleteMeal,
 } from "./meal.controller";
+import { imageUpload } from "@/middlewares/upload.middleware";
 
 const mealRoutes: Router = Router();
 
 // Public / Browsing Endpoints
-mealRoutes.get(
-    "/",
-    validateRequest(getMealQuerySchema),
-    getAllMeals
-);
+mealRoutes.get("/", validateRequest(getMealQuerySchema), getAllMeals);
 
-mealRoutes.get(
-    "/:id",
-    validateRequest(mealIdParamSchema),
-    getMealById
-);
+mealRoutes.get("/:id", validateRequest(mealIdParamSchema), getMealById);
 
 // Protected Endpoints (Provider & Admin only)
 mealRoutes.post(
-    "/",
-    requireAuth,
-    requireRole(Role.PROVIDER, Role.ADMIN),
-    validateRequest(createMealSchema),
-    createMeal
+  "/",
+  requireAuth,
+  requireRole(Role.PROVIDER),
+  imageUpload.array("images", 5),
+  validateRequest(createMealSchema),
+  createMeal,
 );
 
 mealRoutes.patch(
-    "/:id",
-    requireAuth,
-    requireRole(Role.PROVIDER, Role.ADMIN),
-    validateRequest(updateMealSchema),
-    updateMeal
+  "/:id",
+  requireAuth,
+  requireRole(Role.PROVIDER, Role.ADMIN),
+  imageUpload.array("images", 5),
+  validateRequest(updateMealSchema),
+  updateMeal,
 );
 
 mealRoutes.delete(
-    "/:id",
-    requireAuth,
-    requireRole(Role.PROVIDER, Role.ADMIN),
-    validateRequest(mealIdParamSchema),
-    deleteMeal
+  "/:id",
+  requireAuth,
+  requireRole(Role.PROVIDER, Role.ADMIN),
+  validateRequest(mealIdParamSchema),
+  deleteMeal,
 );
 
 export default mealRoutes;

@@ -1,4 +1,3 @@
-
 import httpStatus from "http-status";
 import type {
   TCreateMealInput,
@@ -8,29 +7,58 @@ import type {
 import { prisma } from "@/lib/prisma";
 import ApiError from "@/errors/ApiError";
 import type { Prisma } from "@/prisma/generated/prisma/client";
+import { createMealStorageKey, generateSlug } from "@/utils/storageKey";
+import { uploadBufferToR2 } from "@/utils/r2";
 
 export const createMeal = async (
   userId: string,
-  payload: TCreateMealInput
+  payload: TCreateMealInput,
+  files: Express.Multer.File[],
 ) => {
-
   const providerProfile = await prisma.providerProfile.findUnique({
     where: { userId },
+    select: { id: true },
   });
 
   if (!providerProfile) {
     throw new ApiError(
       httpStatus.FORBIDDEN,
-      "You must have a Provider Profile to create meals"
+      "You must have a Provider Profile to create meals",
     );
   }
-  const targetProviderId = payload.providerId || providerProfile.id;
   const category = await prisma.category.findUnique({
     where: { id: payload.categoryId },
   });
 
   if (!category) {
     throw new ApiError(httpStatus.NOT_FOUND, "Category not found");
+  }
+  const isDuplicate = await prisma.meal.findFirst({
+    where: {
+      providerId: providerProfile.id,
+      name: payload.name,
+    },
+    select: { id: true },
+  });
+
+  if (isDuplicate) {
+    throw new ApiError(
+      httpStatus.CONFLICT,
+      "A meal with this name already exists in your menu",
+    );
+  }
+
+  let updatedImages: string[] | undefined = undefined;
+
+  if (files && files.length > 0) {
+    const slug = generateSlug(payload.name);
+    const uploadedUrls = await Promise.all(
+      files.map(async (file) => {
+        const storageKey = createMealStorageKey(file, slug);
+        return await uploadBufferToR2(storageKey, file.buffer, file.mimetype);
+      }),
+    );
+    updatedImages = uploadedUrls;
   }
 
   return await prisma.meal.create({
@@ -39,10 +67,14 @@ export const createMeal = async (
       description: payload.description,
       price: payload.price,
       categoryId: payload.categoryId,
-      providerId: targetProviderId,
-      ...(payload.image && { image: payload.image }),
-      ...(payload.isAvailable !== undefined && { isAvailable: payload.isAvailable }),
-      ...(payload.isVegetarian !== undefined && { isVegetarian: payload.isVegetarian }),
+      providerId: providerProfile.id,
+      ...(updatedImages && { images: updatedImages }),
+      ...(payload.isAvailable !== undefined && {
+        isAvailable: payload.isAvailable,
+      }),
+      ...(payload.isVegetarian !== undefined && {
+        isVegetarian: payload.isVegetarian,
+      }),
       ...(payload.dietaryType && { dietaryType: payload.dietaryType }),
     },
     include: {
@@ -165,7 +197,8 @@ export const updateMeal = async (
   id: string,
   userId: string,
   isAdmin: boolean,
-  payload: TUpdateMealInput
+  payload: TUpdateMealInput,
+  files?: Express.Multer.File[],
 ) => {
   const meal = await prisma.meal.findUnique({
     where: { id },
@@ -178,24 +211,58 @@ export const updateMeal = async (
   if (!isAdmin) {
     const providerProfile = await prisma.providerProfile.findUnique({
       where: { userId },
+      select: { id: true },
     });
 
     if (!providerProfile || meal.providerId !== providerProfile.id) {
       throw new ApiError(
         httpStatus.FORBIDDEN,
-        "You do not have permission to update this meal"
+        "You do not have permission to update this meal",
       );
     }
   }
 
-  if (payload.categoryId) {
+  if (payload.categoryId && payload.categoryId !== meal.categoryId) {
     const category = await prisma.category.findUnique({
       where: { id: payload.categoryId },
+      select: { id: true },
     });
 
     if (!category) {
       throw new ApiError(httpStatus.NOT_FOUND, "Category not found");
     }
+  }
+
+  if (payload.name && payload.name !== meal.name) {
+    const isDuplicate = await prisma.meal.findFirst({
+      where: {
+        id: { not: id },
+        providerId: meal.providerId,
+        name: payload.name,
+      },
+      select: { id: true },
+    });
+
+    if (isDuplicate) {
+      throw new ApiError(
+        httpStatus.CONFLICT,
+        "You already have a meal with this name",
+      );
+    }
+  }
+
+  let updatedImages: string[] | undefined = undefined;
+  if (files && files.length > 0) {
+    const slug = payload.name
+      ? generateSlug(payload.name)
+      : generateSlug(meal.name);
+    const uploadedUrls = await Promise.all(
+      files.map(async (file) => {
+        const storageKey = createMealStorageKey(file, slug);
+        return await uploadBufferToR2(storageKey, file.buffer, file.mimetype);
+      }),
+    );
+    updatedImages = uploadedUrls;
   }
 
   return await prisma.meal.update({
@@ -205,10 +272,16 @@ export const updateMeal = async (
       ...(payload.description && { description: payload.description }),
       ...(payload.price !== undefined && { price: payload.price }),
       ...(payload.categoryId && { categoryId: payload.categoryId }),
-      ...(payload.image !== undefined && { image: payload.image }),
-      ...(payload.isAvailable !== undefined && { isAvailable: payload.isAvailable }),
-      ...(payload.isVegetarian !== undefined && { isVegetarian: payload.isVegetarian }),
-      ...(payload.dietaryType !== undefined && { dietaryType: payload.dietaryType }),
+      ...(updatedImages && { images: updatedImages }),
+      ...(payload.isAvailable !== undefined && {
+        isAvailable: payload.isAvailable,
+      }),
+      ...(payload.isVegetarian !== undefined && {
+        isVegetarian: payload.isVegetarian,
+      }),
+      ...(payload.dietaryType !== undefined && {
+        dietaryType: payload.dietaryType,
+      }),
     },
     include: {
       category: true,
@@ -225,7 +298,7 @@ export const updateMeal = async (
 export const deleteMeal = async (
   id: string,
   userId: string,
-  isAdmin: boolean
+  isAdmin: boolean,
 ) => {
   const meal = await prisma.meal.findUnique({
     where: { id },
@@ -243,7 +316,7 @@ export const deleteMeal = async (
     if (!providerProfile || meal.providerId !== providerProfile.id) {
       throw new ApiError(
         httpStatus.FORBIDDEN,
-        "You do not have permission to delete this meal"
+        "You do not have permission to delete this meal",
       );
     }
   }

@@ -6,6 +6,13 @@ export const createCategoryStorageKey = (
   return `categories/${Date.now()}-${slug}.${extension}`;
 };
 
+export const createMealStorageKey = (
+  file: Express.Multer.File,
+  slug: string,
+): string => {
+  const extension = file.originalname.split(".").pop() || "png";
+  return `meals/${Date.now()}-${slug}.${extension}`;
+};
 export const generateSlug = (name: string) => {
   return name
     .toLowerCase()
@@ -14,4 +21,3 @@ export const generateSlug = (name: string) => {
     .replace(/[\s_-]+/g, "-")
     .replace(/^-+|-+$/g, "");
 };
-

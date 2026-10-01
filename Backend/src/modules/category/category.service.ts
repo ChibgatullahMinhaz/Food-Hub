@@ -12,7 +12,7 @@ import {
   getPresignedDownloadUrl,
   uploadBufferToR2,
 } from "@/utils/r2";
-import { createCategoryStorageKey, generateSlug } from "@/utils/category";
+import { createCategoryStorageKey, generateSlug } from "@/utils/storageKey";
 
 export const createCategory = async (
   payload: TCreateCategoryInput,

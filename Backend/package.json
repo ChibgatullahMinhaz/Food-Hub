@@ -55,11 +55,6 @@
     "pg": "^8.23.0",
     "sharp": "^0.35.4",
     "zod": "^4.6.5"
-  },
-  "pnpm": {
-    "onlyBuiltDependencies": [
-      "@prisma/client",
-      "prisma"
-    ]
   }
+
 }

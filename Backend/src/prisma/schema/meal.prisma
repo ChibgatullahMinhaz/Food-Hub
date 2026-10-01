@@ -3,7 +3,7 @@ model Meal {
   name         String
   description  String          @db.Text
   price        Float
-  image        String?
+  images       String[]        @default([])
   isAvailable  Boolean         @default(true)
   isVegetarian Boolean         @default(false)
   dietaryType  String?
