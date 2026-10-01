@@ -8,7 +8,7 @@ import { prisma } from "@/lib/prisma";
 import ApiError from "@/errors/ApiError";
 import type { Prisma } from "@/prisma/generated/prisma/client";
 import { createMealStorageKey, generateSlug } from "@/utils/storageKey";
-import { uploadBufferToR2 } from "@/utils/r2";
+import { getPresignedDownloadUrl, uploadBufferToR2 } from "@/utils/r2";
 
 export const createMeal = async (
   userId: string,
@@ -160,13 +160,22 @@ export const getAllMeals = async (query: TGetMealQueryInput) => {
     nextCursor = nextItem?.id || null;
   }
 
+  const mealsWithPresignedUrls = await Promise.all(
+    meals.map(async (meal) => ({
+      ...meal,
+      images: await Promise.all(
+        meal.images.map((imageKey) => getPresignedDownloadUrl(imageKey)),
+      ),
+    })),
+  );
+
   return {
     meta: {
       limit,
       nextCursor,
       hasMore: !!nextCursor,
     },
-    data: meals,
+    data: mealsWithPresignedUrls,
   };
 };
 
@@ -190,7 +199,12 @@ export const getMealById = async (id: string) => {
     throw new ApiError(httpStatus.NOT_FOUND, "Meal not found");
   }
 
-  return meal;
+  return {
+    ...meal,
+    images: await Promise.all(
+      meal.images.map((imageKey) => getPresignedDownloadUrl(imageKey)),
+    ),
+  };
 };
 
 export const updateMeal = async (
