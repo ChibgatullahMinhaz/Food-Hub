@@ -13,7 +13,7 @@ export const applyForProvider = async (
     Prisma.ProviderProfileUncheckedCreateInput,
     "userId" | "id" | "status"
   >,
-  file: Express.Multer.File,
+  file?: Express.Multer.File,
 ) => {
   const existingProfile = await prisma.providerProfile.findUnique({
     where: { userId },
