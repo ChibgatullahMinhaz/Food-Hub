@@ -1,8 +1,5 @@
 import express, {
   type Application,
-  type Request,
-  type Response,
-  type NextFunction,
 } from "express";
 import cors from "cors";
 import { toNodeHandler } from "better-auth/node";

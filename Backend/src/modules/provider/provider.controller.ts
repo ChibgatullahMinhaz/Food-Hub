@@ -10,8 +10,9 @@ export const applyForProvider: RequestHandler = catchAsync(async (req, res) => {
     if (!req.user) {
         throw new ApiError(httpStatus.UNAUTHORIZED, 'please Login First...! ')
     }
+    const file = req.file;
     const userId = req.user.id;
-    const result = await providerService.applyForProvider(userId, req.body);
+    const result = await providerService.applyForProvider(userId, req.body, file);
 
     sendResponse(res, {
         statusCode: httpStatus.CREATED,

@@ -9,7 +9,6 @@ model Order {
   contactPhone        String
   paymentMethod       String      @default("CASH_ON_DELIVERY")
   specialInstructions String?
-
   items OrderItem[]
 
   createdAt DateTime @default(now())

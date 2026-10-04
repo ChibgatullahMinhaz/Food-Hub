@@ -1,3 +1,4 @@
+import { booleanString, numericString } from "@/utils/zodCoerce";
 import { z } from "zod";
 
 export const createMealSchema = z.object({
@@ -6,9 +7,10 @@ export const createMealSchema = z.object({
     description: z
       .string()
       .min(10, "Description must be at least 10 characters"),
-    price: z.number().positive("Price must be a positive number"),
-    isAvailable: z.boolean().optional().default(true),
-    isVegetarian: z.boolean().optional().default(false),
+    price: numericString.positive("Price must be a positive number"),
+    preparationTime: numericString.int("Preparation time must be an integer").optional(),
+    isAvailable: booleanString.default(true),
+    isVegetarian: booleanString.default(false),
     dietaryType: z.string().optional(),
     categoryId: z.string().cuid("Invalid Category ID"),
     providerId: z.string().cuid("Invalid Provider ID").optional(),
@@ -47,7 +49,6 @@ export const updateMealSchema = z.object({
       .min(10, "Description must be at least 10 characters")
       .optional(),
     price: z.number().positive("Price must be a positive number").optional(),
-    // image: z.string().url("Invalid image URL").optional(),
     isAvailable: z.boolean().optional(),
     isVegetarian: z.boolean().optional(),
     dietaryType: z.string().optional(),

@@ -12,8 +12,6 @@ model ProviderProfile {
   status         ProviderStatus @default(PENDING)
   createdAt      DateTime       @default(now())
   updatedAt      DateTime       @updatedAt
-
   meals Meal[]
-
   @@map("providerProfile")
 }

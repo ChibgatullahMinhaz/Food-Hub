@@ -1,8 +1,9 @@
 model Meal {
-  id           String          @id @default(cuid())
-  name         String
-  description  String          @db.Text
-  price        Float
+  id              String @id @default(cuid())
+  name            String
+  description     String @db.Text
+  price           Float
+  preparationTime Int
   images       String[]        @default([])
   isAvailable  Boolean         @default(true)
   isVegetarian Boolean         @default(false)

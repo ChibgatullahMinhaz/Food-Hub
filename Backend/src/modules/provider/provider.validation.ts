@@ -3,12 +3,28 @@ import { z } from "zod";
 
 export const applyProviderSchema = z.object({
   body: z.object({
-    restaurantName: z.string().min(3, "Restaurant name must be at least 3 characters"),
+    restaurantName: z
+      .string()
+      .min(3, "Restaurant name must be at least 3 characters"),
     description: z.string().optional(),
-    bannerImage: z.string().url("Invalid image URL").optional(),
     cuisineType: z.string().optional(),
     address: z.string().min(5, "Address is required"),
     phone: z.string().min(10, "Valid phone number is required"),
+    file: z
+      .object({
+        fieldname: z.string(),
+        originalname: z.string(),
+        encoding: z.string(),
+        mimetype: z
+          .string()
+          .refine(
+            (type) => type.startsWith("image/"),
+            "Only image files are allowed",
+          ),
+        buffer: z.instanceof(Buffer),
+        size: z.number(),
+      })
+      .optional(),
   }),
 });
 
@@ -23,7 +39,6 @@ export const updateProviderStatusSchema = z.object({
   }),
 });
 
-
 export const getProviderQuerySchema = z.object({
   query: z.object({
     cursor: z.string().optional(),
@@ -34,12 +49,11 @@ export const getProviderQuerySchema = z.object({
       .refine((val) => val > 0 && val <= 100, {
         message: "Limit must be between 1 and 100",
       }),
-    status: z.nativeEnum(ProviderStatus).optional(), 
+    status: z.nativeEnum(ProviderStatus).optional(),
     search: z.string().optional(),
     sortOrder: z.enum(["asc", "desc"]).optional().default("desc"),
   }),
 });
-
 
 export const providerIdParamSchema = z.object({
   params: z.object({
@@ -47,6 +61,10 @@ export const providerIdParamSchema = z.object({
   }),
 });
 
-export type TProviderIdParamInput = z.infer<typeof providerIdParamSchema>["params"];
+export type TProviderIdParamInput = z.infer<
+  typeof providerIdParamSchema
+>["params"];
 // Types Export
-export type GetProviderQueryInput = z.infer<typeof getProviderQuerySchema>["query"];
+export type GetProviderQueryInput = z.infer<
+  typeof getProviderQuerySchema
+>["query"];
