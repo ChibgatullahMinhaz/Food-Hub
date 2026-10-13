@@ -580,6 +580,21 @@ Tracking initial approach manual refresh/polling (e.g. 30s while order nontermin
 
 ## 9. Phase 6: Reviews
 
+**Implemented in Client:** meal detail (`/shop/[id]`) and provider detail
+(`/providers/[id]`) show average rating, total review count, and a paginated
+review list, both public (no sign-in needed to read). On meal detail, a
+signed-in CUSTOMER account can post a review directly (no `orderId`, since the
+page has no order context). On an order's detail page (`/orders/[id]`), each
+item offers "Review this meal," which links the review to that specific
+**order ID** (not an OrderItem ID) as the guide requires. Review owners can
+edit or delete their own review inline; duplicate/ownership/permission errors
+from the backend are surfaced via `ApiErrorMessage`. Create/update/delete
+invalidate the `Review` tag so the aggregate rating and list refresh.
+
+Review DTOs and RTK Query endpoints are in `Client/types/review.ts` and
+`Client/store/api/review-api.ts`; the review UI is in
+`Client/components/reviews/review-section.tsx`.
+
 | Method | Endpoint | Access | Body |
 |---|---|---|---|
 | GET | `/api/review/meal/:mealId` | Public | Query cursor/limit |
@@ -596,7 +611,11 @@ Tracking initial approach manual refresh/polling (e.g. 30s while order nontermin
 - Create/update/delete -> `Review` invalidate; aggregate rating/count refresh.
 - Review details include customer `{id,name}`; provider review list meal `{id,name}`-o include kore.
 
-**Done:** review lifecycle + duplicate/ownership errors + aggregate refresh; optional orderId semantics tested.
+**Done:** review lifecycle + duplicate/ownership errors + aggregate refresh;
+optional orderId semantics implemented (order detail passes it, meal detail
+omits it). TypeScript/lint/build pass; Backend at `localhost:5000` was
+unreachable during this session, so live rating data, duplicate-review
+rejection, and ownership errors were not exercised against a real database.
 
 ## 10. Phase 7: Provider application + dashboard
 
