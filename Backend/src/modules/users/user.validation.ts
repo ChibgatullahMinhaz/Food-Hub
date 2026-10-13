@@ -17,13 +17,17 @@ export const getUsersQuerySchema = z.object({
     search: z.string().optional(),
     role: z.nativeEnum(Role).optional(),
     status: z.nativeEnum(UserStatus).optional(),
+    isEmailVerified: z
+      .enum(["true", "false"])
+      .optional()
+      .transform((value) => (value === undefined ? undefined : value === "true")),
   }),
 });
 
 
 export const updateUserSchema = z.object({
   params: z.object({
-    id: z.string().uuid("ID is required and must be a valid UUID"),
+    id: z.string().cuid("Invalid user ID"),
   }),
 
   body: z.object({
@@ -36,12 +40,12 @@ export const updateUserSchema = z.object({
 
 export const userDeleteSchema = z.object({
   params: z.object({
-    id: z.string().uuid("ID is required and must be a valid UUID"),
+    id: z.string().cuid("Invalid user ID"),
   })
 });
 export const userDetailsSchema = z.object({
   params: z.object({
-    id: z.string().uuid("ID is required and must be a valid UUID"),
+    id: z.string().cuid("Invalid user ID"),
   })
 });
 

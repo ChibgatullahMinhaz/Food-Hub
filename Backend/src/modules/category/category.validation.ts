@@ -23,7 +23,7 @@ export const createCategorySchema = z.object({
 
 export const updateCategorySchema = z.object({
   params: z.object({
-    id: z.string().cuid2("Invalid Category ID"),
+    id: z.string().cuid("Invalid Category ID"),
   }),
   body: z.object({
     name: z
@@ -60,7 +60,14 @@ export const getCategoryQuerySchema = z.object({
     limit: z
       .string()
       .optional()
-      .transform((val) => (val ? parseInt(val, 10) : 10)),
+      .transform((val) => (val ? parseInt(val, 10) : 10))
+      .pipe(
+        z
+          .number()
+          .int()
+          .positive("Limit must be positive")
+          .max(100, "Limit cannot exceed 100"),
+      ),
     search: z.string().optional(),
     sortBy: z.enum(["name", "createdAt"]).optional().default("createdAt"),
     sortOrder: z.enum(["asc", "desc"]).optional().default("desc"),

@@ -4,6 +4,23 @@ import type { TCreateOrderInput, TGetOrdersQueryInput, TUpdateOrderStatusInput }
 import { prisma } from "@/lib/prisma";
 import ApiError from "@/errors/ApiError";
 import type { Prisma } from "@/prisma/generated/prisma/client";
+import { getPresignedDownloadUrl } from "@/utils/r2";
+
+const withSignedMealImages = async <T extends { images: string[] }>(
+  meal: T,
+) => ({
+  ...meal,
+  images: await Promise.all(meal.images.map(getPresignedDownloadUrl)),
+});
+
+const withSignedOrderItemMealImages = async <
+  T extends { meal: { images: string[] } },
+>(
+  item: T,
+) => ({
+  ...item,
+  meal: await withSignedMealImages(item.meal),
+});
 
 
 // Unique Order Number Generator (e.g. ORD-20260925-8492)
@@ -52,7 +69,7 @@ export const createOrderFromCart = async (
   const orderNumber = generateOrderNumber();
 
   // 4. Transaction: Create Order & Clear Cart
-  return await prisma.$transaction(async (tx) => {
+  const order = await prisma.$transaction(async (tx) => {
     const order = await tx.order.create({
       data: {
         orderNumber,
@@ -79,7 +96,7 @@ export const createOrderFromCart = async (
               select: {
                 id: true,
                 name: true,
-                image: true,
+                images: true,
               },
             },
           },
@@ -94,6 +111,11 @@ export const createOrderFromCart = async (
 
     return order;
   });
+
+  return {
+    ...order,
+    items: await Promise.all(order.items.map(withSignedOrderItemMealImages)),
+  };
 };
 
 export const getMyOrders = async (
@@ -112,7 +134,7 @@ export const getMyOrders = async (
     take: limit + 1,
     ...(cursor && { cursor: { id: cursor } }),
     skip: cursor ? 1 : 0,
-    orderBy: { createdAt: "desc" },
+    orderBy: [{ createdAt: "desc" }, { id: "desc" }],
     include: {
       items: {
         include: {
@@ -120,7 +142,7 @@ export const getMyOrders = async (
             select: {
               id: true,
               name: true,
-              image: true,
+              images: true,
             },
           },
         },
@@ -130,13 +152,20 @@ export const getMyOrders = async (
 
   let nextCursor: string | null = null;
   if (orders.length > limit) {
-    const nextItem = orders.pop();
-    nextCursor = nextItem?.id || null;
+    orders.pop();
+    nextCursor = orders.at(-1)?.id ?? null;
   }
 
   return {
     meta: { limit, nextCursor, hasMore: !!nextCursor },
-    data: orders,
+    data: await Promise.all(
+      orders.map(async (order) => ({
+        ...order,
+        items: await Promise.all(
+          order.items.map(withSignedOrderItemMealImages),
+        ),
+      })),
+    ),
   };
 };
 
@@ -179,7 +208,7 @@ export const getProviderOrders = async (
     take: limit + 1,
     ...(cursor && { cursor: { id: cursor } }),
     skip: cursor ? 1 : 0,
-    orderBy: { createdAt: "desc" },
+    orderBy: [{ createdAt: "desc" }, { id: "desc" }],
     include: {
       customer: {
         select: {
@@ -194,6 +223,7 @@ export const getProviderOrders = async (
             select: {
               id: true,
               name: true,
+              images: true,
             },
           },
         },
@@ -203,13 +233,20 @@ export const getProviderOrders = async (
 
   let nextCursor: string | null = null;
   if (orders.length > limit) {
-    const nextItem = orders.pop();
-    nextCursor = nextItem?.id || null;
+    orders.pop();
+    nextCursor = orders.at(-1)?.id ?? null;
   }
 
   return {
     meta: { limit, nextCursor, hasMore: !!nextCursor },
-    data: orders,
+    data: await Promise.all(
+      orders.map(async (order) => ({
+        ...order,
+        items: await Promise.all(
+          order.items.map(withSignedOrderItemMealImages),
+        ),
+      })),
+    ),
   };
 };
 
@@ -258,7 +295,10 @@ export const getOrderById = async (
     }
   }
 
-  return order;
+  return {
+    ...order,
+    items: await Promise.all(order.items.map(withSignedOrderItemMealImages)),
+  };
 };
 
 export const updateOrderStatus = async (

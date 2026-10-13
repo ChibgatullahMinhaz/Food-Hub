@@ -3,9 +3,11 @@ import { prismaAdapter } from "better-auth/adapters/prisma";
 import { prisma } from "./prisma";
 import { Role, UserStatus } from "@/prisma/generated/prisma/enums";
 import { APIError } from "better-auth/api";
+import { trustedOrigins } from "@/constants/origin";
 
 
 export const auth = betterAuth({
+  trustedOrigins,
   database: prismaAdapter(prisma, {
     provider: "postgresql",
   }),

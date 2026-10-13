@@ -11,6 +11,7 @@ import {
   applyForProvider,
   changeProviderStatus,
   getAllProviders,
+  getMyProviderProfile,
   getProviderById,
 } from "./provider.controller";
 import { Role } from "@/prisma/generated/prisma/enums";
@@ -42,6 +43,7 @@ providerRoutes.get(
   validateRequest(getProviderQuerySchema),
   getAllProviders,
 );
+providerRoutes.get("/me", requireAuth, getMyProviderProfile);
 providerRoutes.get(
   "/:id",
   validateRequest(providerIdParamSchema),

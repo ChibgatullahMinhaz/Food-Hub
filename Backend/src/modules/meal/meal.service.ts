@@ -66,6 +66,7 @@ export const createMeal = async (
       name: payload.name,
       description: payload.description,
       price: payload.price,
+      preparationTime: payload.preparationTime,
       categoryId: payload.categoryId,
       providerId: providerProfile.id,
       ...(updatedImages && { images: updatedImages }),
@@ -133,9 +134,7 @@ export const getAllMeals = async (query: TGetMealQueryInput) => {
     take: limit + 1,
     ...(cursor && { cursor: { id: cursor } }),
     skip: cursor ? 1 : 0,
-    orderBy: {
-      [sortBy]: sortOrder,
-    },
+    orderBy: [{ [sortBy]: sortOrder }, { id: sortOrder }],
     include: {
       category: {
         select: {
@@ -156,8 +155,8 @@ export const getAllMeals = async (query: TGetMealQueryInput) => {
   let nextCursor: string | null = null;
 
   if (meals.length > limit) {
-    const nextItem = meals.pop();
-    nextCursor = nextItem?.id || null;
+    meals.pop();
+    nextCursor = meals.at(-1)?.id ?? null;
   }
 
   const mealsWithPresignedUrls = await Promise.all(
@@ -285,6 +284,9 @@ export const updateMeal = async (
       ...(payload.name && { name: payload.name }),
       ...(payload.description && { description: payload.description }),
       ...(payload.price !== undefined && { price: payload.price }),
+      ...(payload.preparationTime !== undefined && {
+        preparationTime: payload.preparationTime,
+      }),
       ...(payload.categoryId && { categoryId: payload.categoryId }),
       ...(updatedImages && { images: updatedImages }),
       ...(payload.isAvailable !== undefined && {

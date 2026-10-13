@@ -49,7 +49,13 @@ export const createCategory = async (
 };
 
 export const getAllCategories = async (query: TGetCategoryQueryInput) => {
-  const { cursor, limit = 10, search, sortOrder = "desc" } = query;
+  const {
+    cursor,
+    limit = 10,
+    search,
+    sortBy = "createdAt",
+    sortOrder = "desc",
+  } = query;
 
   const whereConditions: Prisma.CategoryWhereInput = {
     ...(search && {
@@ -65,9 +71,7 @@ export const getAllCategories = async (query: TGetCategoryQueryInput) => {
     take: limit + 1,
     ...(cursor && { cursor: { id: cursor } }),
     skip: cursor ? 1 : 0,
-    orderBy: {
-      createdAt: sortOrder,
-    },
+    orderBy: [{ [sortBy]: sortOrder }, { id: sortOrder }],
     include: {
       _count: {
         select: { meals: true },
@@ -78,8 +82,8 @@ export const getAllCategories = async (query: TGetCategoryQueryInput) => {
   let nextCursor: string | null = null;
 
   if (categories.length > limit) {
-    const nextItem = categories.pop();
-    nextCursor = nextItem?.id || null;
+    categories.pop();
+    nextCursor = categories.at(-1)?.id ?? null;
   }
 
   const categoriesWithPresignedUrls = await Promise.all(

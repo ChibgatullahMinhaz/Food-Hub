@@ -8,7 +8,9 @@ export const createMealSchema = z.object({
       .string()
       .min(10, "Description must be at least 10 characters"),
     price: numericString.positive("Price must be a positive number"),
-    preparationTime: numericString.int("Preparation time must be an integer").optional(),
+    preparationTime: numericString
+      .int("Preparation time must be an integer")
+      .positive("Preparation time must be greater than zero"),
     isAvailable: booleanString.default(true),
     isVegetarian: booleanString.default(false),
     dietaryType: z.string().optional(),
@@ -48,9 +50,15 @@ export const updateMealSchema = z.object({
       .string()
       .min(10, "Description must be at least 10 characters")
       .optional(),
-    price: z.number().positive("Price must be a positive number").optional(),
-    isAvailable: z.boolean().optional(),
-    isVegetarian: z.boolean().optional(),
+    price: numericString
+      .positive("Price must be a positive number")
+      .optional(),
+    preparationTime: numericString
+      .int("Preparation time must be an integer")
+      .positive("Preparation time must be greater than zero")
+      .optional(),
+    isAvailable: booleanString.optional(),
+    isVegetarian: booleanString.optional(),
     dietaryType: z.string().optional(),
     categoryId: z.string().cuid("Invalid Category ID").optional(),
     providerId: z.string().cuid("Invalid Provider ID").optional(),

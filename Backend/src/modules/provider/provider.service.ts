@@ -4,7 +4,7 @@ import { Prisma } from "@/prisma/generated/prisma/client";
 import { ProviderStatus, Role } from "@/prisma/generated/prisma/enums";
 import httpStatus from "http-status";
 import type { GetProviderQueryInput } from "./provider.validation";
-import { uploadBufferToR2 } from "@/utils/r2";
+import { getPresignedDownloadUrl, uploadBufferToR2 } from "@/utils/r2";
 import { createProviderStorageKey, generateSlug } from "@/utils/storageKey";
 
 export const applyForProvider = async (
@@ -41,27 +41,43 @@ export const applyForProvider = async (
     const storageKey = createProviderStorageKey(file, slug);
     imageUrl = await uploadBufferToR2(storageKey, file.buffer, file.mimetype);
   }
-  return await prisma.providerProfile.create({
-    data: {
-      ...payload,
-      userId,
-      ...(imageUrl && { bannerImage: imageUrl }),
-      status: ProviderStatus.PENDING,
-    },
-    select: {
-      id: true,
-      userId: true,
-      restaurantName: true,
-      description: true,
-      bannerImage: true,
-      cuisineType: true,
-      address: true,
-      phone: true,
-      isOpen: true,
-      status: true,
-      createdAt: true,
-    },
-  });
+  const data = {
+    ...payload,
+    userId,
+    ...(imageUrl && { bannerImage: imageUrl }),
+    status: ProviderStatus.PENDING,
+  };
+  const select = {
+    id: true,
+    userId: true,
+    restaurantName: true,
+    description: true,
+    bannerImage: true,
+    cuisineType: true,
+    address: true,
+    phone: true,
+    isOpen: true,
+    status: true,
+    createdAt: true,
+  } as const;
+
+  const profile = existingProfile
+    ? await prisma.providerProfile.update({
+        where: { id: existingProfile.id },
+        data,
+        select,
+      })
+    : await prisma.providerProfile.create({
+        data,
+        select,
+      });
+
+  return {
+    ...profile,
+    bannerImage: profile.bannerImage
+      ? await getPresignedDownloadUrl(profile.bannerImage)
+      : null,
+  };
 };
 
 export const updateProviderStatus = async (
@@ -114,9 +130,7 @@ export const getAllProviders = async (query: GetProviderQueryInput) => {
     take: limit + 1,
     ...(cursor && { cursor: { id: cursor } }),
     skip: cursor ? 1 : 0,
-    orderBy: {
-      createdAt: sortOrder,
-    },
+    orderBy: [{ createdAt: sortOrder }, { id: sortOrder }],
     include: {
       user: {
         select: {
@@ -134,8 +148,8 @@ export const getAllProviders = async (query: GetProviderQueryInput) => {
 
   if (providers.length > limit) {
     hasMore = true;
-    const nextItem = providers.pop();
-    nextCursor = nextItem?.id || null;
+    providers.pop();
+    nextCursor = providers.at(-1)?.id ?? null;
   }
   return {
     meta: {
@@ -144,6 +158,35 @@ export const getAllProviders = async (query: GetProviderQueryInput) => {
       hasMore,
     },
     data: providers,
+  };
+};
+
+export const getMyProviderProfile = async (userId: string) => {
+  const profile = await prisma.providerProfile.findUnique({
+    where: { userId },
+    select: {
+      id: true,
+      userId: true,
+      restaurantName: true,
+      description: true,
+      bannerImage: true,
+      cuisineType: true,
+      address: true,
+      phone: true,
+      isOpen: true,
+      status: true,
+      createdAt: true,
+      updatedAt: true,
+    },
+  });
+
+  if (!profile) return null;
+
+  return {
+    ...profile,
+    bannerImage: profile.bannerImage
+      ? await getPresignedDownloadUrl(profile.bannerImage)
+      : null,
   };
 };
 
@@ -169,7 +212,7 @@ export const getProviderById = async (id: string) => {
           id: true,
           name: true,
           price: true,
-          image: true,
+          images: true,
           isVegetarian: true,
           category: {
             select: {
@@ -190,5 +233,18 @@ export const getProviderById = async (id: string) => {
     throw new ApiError(httpStatus.NOT_FOUND, "Provider profile not found");
   }
 
-  return provider;
+  return {
+    ...provider,
+    bannerImage: provider.bannerImage
+      ? await getPresignedDownloadUrl(provider.bannerImage)
+      : null,
+    meals: await Promise.all(
+      provider.meals.map(async (meal) => ({
+        ...meal,
+        images: await Promise.all(
+          meal.images.map(getPresignedDownloadUrl),
+        ),
+      })),
+    ),
+  };
 };

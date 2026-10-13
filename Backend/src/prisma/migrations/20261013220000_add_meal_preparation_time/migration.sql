@@ -1,0 +1,5 @@
+ALTER TABLE "meal"
+ADD COLUMN "preparationTime" INTEGER NOT NULL DEFAULT 15;
+
+ALTER TABLE "meal"
+ALTER COLUMN "preparationTime" DROP DEFAULT;

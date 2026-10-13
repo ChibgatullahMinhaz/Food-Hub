@@ -2,6 +2,23 @@ import httpStatus from "http-status";
 import type { TAddToCartInput, TUpdateCartItemInput } from "./cart.validation";
 import { prisma } from "@/lib/prisma";
 import ApiError from "@/errors/ApiError";
+import { getPresignedDownloadUrl } from "@/utils/r2";
+
+const withSignedMealImages = async <T extends { images: string[] }>(
+  meal: T,
+) => ({
+  ...meal,
+  images: await Promise.all(meal.images.map(getPresignedDownloadUrl)),
+});
+
+const withSignedCartItemMealImages = async <
+  T extends { meal: { images: string[] } },
+>(
+  item: T,
+) => ({
+  ...item,
+  meal: await withSignedMealImages(item.meal),
+});
 
 export const addToCart = async (userId: string, payload: TAddToCartInput) => {
   const { mealId, quantity } = payload;
@@ -41,7 +58,7 @@ export const addToCart = async (userId: string, payload: TAddToCartInput) => {
   });
 
   if (existingItem) {
-    return await prisma.cartItem.update({
+    const item = await prisma.cartItem.update({
       where: { id: existingItem.id },
       data: {
         quantity: existingItem.quantity + quantity,
@@ -52,15 +69,16 @@ export const addToCart = async (userId: string, payload: TAddToCartInput) => {
             id: true,
             name: true,
             price: true,
-            image: true,
+            images: true,
             providerId: true,
           },
         },
       },
     });
+    return withSignedCartItemMealImages(item);
   }
 
-  return await prisma.cartItem.create({
+  const item = await prisma.cartItem.create({
     data: {
       cartId: cart.id,
       mealId,
@@ -72,12 +90,13 @@ export const addToCart = async (userId: string, payload: TAddToCartInput) => {
           id: true,
           name: true,
           price: true,
-          image: true,
+          images: true,
           providerId: true,
         },
       },
     },
   });
+  return withSignedCartItemMealImages(item);
 };
 
 export const getMyCart = async (userId: string) => {
@@ -94,7 +113,7 @@ export const getMyCart = async (userId: string) => {
               id: true,
               name: true,
               price: true,
-              image: true,
+              images: true,
               isAvailable: true,
               provider: {
                 select: {
@@ -117,6 +136,7 @@ export const getMyCart = async (userId: string) => {
     };
   }
 
+  const items = await Promise.all(cart.items.map(withSignedCartItemMealImages));
   const subtotal = cart.items.reduce(
     (acc, item) => acc + item.meal.price * item.quantity,
     0
@@ -124,6 +144,7 @@ export const getMyCart = async (userId: string) => {
 
   return {
     ...cart,
+    items,
     subtotal: Number(subtotal.toFixed(2)),
   };
 };
@@ -142,7 +163,7 @@ export const updateCartItemQuantity = async (
     throw new ApiError(httpStatus.NOT_FOUND, "Cart item not found");
   }
 
-  return await prisma.cartItem.update({
+  const item = await prisma.cartItem.update({
     where: { id: itemId },
     data: {
       quantity: payload.quantity,
@@ -153,11 +174,12 @@ export const updateCartItemQuantity = async (
           id: true,
           name: true,
           price: true,
-          image: true,
+          images: true,
         },
       },
     },
   });
+  return withSignedCartItemMealImages(item);
 };
 
 export const removeCartItem = async (userId: string, itemId: string) => {

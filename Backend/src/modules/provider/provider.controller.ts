@@ -7,62 +7,85 @@ import ApiError from "@/errors/ApiError";
 import type { GetProviderQueryInput } from "./provider.validation";
 
 export const applyForProvider: RequestHandler = catchAsync(async (req, res) => {
-    if (!req.user) {
-        throw new ApiError(httpStatus.UNAUTHORIZED, 'please Login First...! ')
-    }
-    const userId = req.user.id;
-    const result = await providerService.applyForProvider(userId, req.body, req.file);
+  if (!req.user) {
+    throw new ApiError(httpStatus.UNAUTHORIZED, "please Login First...! ");
+  }
+  const userId = req.user.id;
+  const result = await providerService.applyForProvider(
+    userId,
+    req.body,
+    req.file,
+  );
 
-    sendResponse(res, {
-        statusCode: httpStatus.CREATED,
-        success: true,
-        message: "Provider application submitted successfully. Pending admin approval.",
-        data: result,
-    });
+  sendResponse(res, {
+    statusCode: httpStatus.CREATED,
+    success: true,
+    message:
+      "Provider application submitted successfully. Pending admin approval.",
+    data: result,
+  });
 });
 
-export const changeProviderStatus: RequestHandler = catchAsync(async (req, res) => {
+export const changeProviderStatus: RequestHandler = catchAsync(
+  async (req, res) => {
     const { id } = req.params;
     const { status } = req.body;
 
-    if (!id || typeof id !== 'string') {
-        throw new ApiError(httpStatus.BAD_REQUEST, "Invalid or missing User ID");
+    if (!id || typeof id !== "string") {
+      throw new ApiError(httpStatus.BAD_REQUEST, "Invalid or missing User ID");
     }
     const result = await providerService.updateProviderStatus(id, status);
 
     sendResponse(res, {
-        statusCode: httpStatus.OK,
-        success: true,
-        message: `Provider application has been ${status.toLowerCase()} successfully.`,
-        data: result,
+      statusCode: httpStatus.OK,
+      success: true,
+      message: `Provider application has been ${status.toLowerCase()} successfully.`,
+      data: result,
     });
-});
+  },
+);
 
 export const getAllProviders: RequestHandler = catchAsync(async (req, res) => {
-    const query = req.query as unknown as GetProviderQueryInput;
-    const result = await providerService.getAllProviders(query);
+  const query = req.query as unknown as GetProviderQueryInput;
+  const result = await providerService.getAllProviders(query);
 
-    sendResponse(res, {
-        statusCode: httpStatus.OK,
-        success: true,
-        message: "Providers fetched successfully",
-        data: result.data,
-        meta: result.meta,
-    });
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: "Providers fetched successfully",
+    data: result.data,
+    meta: result.meta,
+  });
 });
-
 
 export const getProviderById: RequestHandler = catchAsync(async (req, res) => {
-    const { id } = req.params;
-    if (!id || typeof id !== 'string') {
-        throw new ApiError(httpStatus.BAD_REQUEST, "Invalid or missing User ID");
+  const { id } = req.params;
+  if (!id || typeof id !== "string") {
+    throw new ApiError(httpStatus.BAD_REQUEST, "Invalid or missing User ID");
+  }
+  const result = await providerService.getProviderById(id);
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: "Provider profile retrieved successfully",
+    data: result,
+  });
+});
+
+export const getMyProviderProfile: RequestHandler = catchAsync(
+  async (req, res) => {
+    if (!req.user) {
+      throw new ApiError(httpStatus.UNAUTHORIZED, "Please log in first.");
     }
-    const result = await providerService.getProviderById(id);
+
+    const result = await providerService.getMyProviderProfile(req.user.id);
 
     sendResponse(res, {
-        statusCode: httpStatus.OK,
-        success: true,
-        message: "Provider profile retrieved successfully",
-        data: result,
+      statusCode: httpStatus.OK,
+      success: true,
+      message: "Current provider profile retrieved successfully",
+      data: result,
     });
-});
+  },
+);

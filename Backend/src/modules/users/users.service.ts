@@ -39,15 +39,15 @@ const getAllUsers = async (filters: IUserQueryFilters) => {
             phone: true,
             role: true,
             status: true,
-            isEmailVerified: true,
+            emailVerified: true,
             image: true,
             createdAt: true,
             updatedAt: true,
             providerProfile: {
                 select: {
                     id: true,
-                    storeName: true,
-                    isApproved: true,
+                    restaurantName: true,
+                    status: true,
                 },
             },
             _count: {
@@ -62,8 +62,8 @@ const getAllUsers = async (filters: IUserQueryFilters) => {
     let hasMore = false;
     if (users.length > limit) {
         hasMore = true;
-        const nextItem = users.pop();
-        nextCursor = nextItem?.id || null;
+        users.pop();
+        nextCursor = users.at(-1)?.id ?? null;
     }
 
     return {

@@ -103,7 +103,7 @@ export const getMealReviews = async (
         take: limit + 1,
         ...(cursor && { cursor: { id: cursor } }),
         skip: cursor ? 1 : 0,
-        orderBy: { createdAt: "desc" },
+        orderBy: [{ createdAt: "desc" }, { id: "desc" }],
         include: {
             customer: {
                 select: {
@@ -123,8 +123,8 @@ export const getMealReviews = async (
 
     let nextCursor: string | null = null;
     if (reviews.length > limit) {
-        const nextItem = reviews.pop();
-        nextCursor = nextItem?.id || null;
+        reviews.pop();
+        nextCursor = reviews.at(-1)?.id ?? null;
     }
 
     return {
@@ -154,7 +154,7 @@ export const getProviderReviews = async (
         take: limit + 1,
         ...(cursor && { cursor: { id: cursor } }),
         skip: cursor ? 1 : 0,
-        orderBy: { createdAt: "desc" },
+        orderBy: [{ createdAt: "desc" }, { id: "desc" }],
         include: {
             customer: {
                 select: {
@@ -183,8 +183,8 @@ export const getProviderReviews = async (
 
     let nextCursor: string | null = null;
     if (reviews.length > limit) {
-        const nextItem = reviews.pop();
-        nextCursor = nextItem?.id || null;
+        reviews.pop();
+        nextCursor = reviews.at(-1)?.id ?? null;
     }
 
     return {
