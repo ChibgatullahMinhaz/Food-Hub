@@ -125,7 +125,7 @@ function nextProviderStatus(status: OrderStatus): OrderStatus | null {
 function orderPath(audience: OrderAudience, id: string) {
   const basePath =
     audience === "customer"
-      ? "/orders"
+      ? "/customer/orders"
       : audience === "admin"
         ? "/admin/orders"
         : "/seller/orders"
@@ -440,7 +440,7 @@ function SignInForOrders({ audience }: { audience: OrderAudience }) {
   const router = useRouter()
   const destination =
     audience === "customer"
-      ? "/orders"
+      ? "/customer/orders"
       : audience === "admin"
         ? "/admin/orders"
         : "/seller/orders"

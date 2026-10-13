@@ -75,7 +75,9 @@ export function CheckoutForm() {
     })
 
     if ("data" in result && result.data) {
-      router.replace(`/orders/${encodeURIComponent(result.data.data.id)}`)
+      router.replace(
+        `/customer/orders/${encodeURIComponent(result.data.data.id)}`
+      )
     }
   }
 

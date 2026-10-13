@@ -32,6 +32,17 @@ export type UserProfile = {
   createdAt: string
   updatedAt: string
 }
+export interface AdminUser extends UserProfile {
+  phone: string | null
+  emailVerified: boolean
+  image: string | null
+  providerProfile: {
+    id: string
+    restaurantName: string
+    status: ProviderStatus
+  } | null
+  _count: { orders: number }
+}
 export type OrderStatus =
   | "PLACED"
   | "PREPARING"

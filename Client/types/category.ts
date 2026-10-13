@@ -25,3 +25,4 @@ export interface CategoryListData {
 
 export type CategoryListResponse = ApiResponse<CategoryListData>
 export type CategoryDetailResponse = ApiResponse<Category>
+export type CategoryMutationResponse = ApiResponse<Category>

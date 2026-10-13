@@ -154,9 +154,10 @@ function ReviewComposer({
   )
 }
 
-function ReviewCard({ review, currentUserId }: {
+function ReviewCard({ review, currentUserId, canModerate }: {
   review: Review
   currentUserId?: string
+  canModerate: boolean
 }) {
   const [editing, setEditing] = useState(false)
   const [rating, setRating] = useState(review.rating)
@@ -164,6 +165,7 @@ function ReviewCard({ review, currentUserId }: {
   const [updateReview, update] = useUpdateReviewMutation()
   const [deleteReview, deletion] = useDeleteReviewMutation()
   const isOwner = Boolean(currentUserId && currentUserId === review.customer.id)
+  const canDelete = isOwner || canModerate
 
   async function save(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
@@ -182,8 +184,12 @@ function ReviewCard({ review, currentUserId }: {
 
   async function remove() {
     if (
-      isOwner &&
-      window.confirm("Delete your review? This cannot be undone.")
+      canDelete &&
+      window.confirm(
+        isOwner
+          ? "Delete your review? This cannot be undone."
+          : "Delete this review as an administrator? This cannot be undone."
+      )
     ) {
       await deleteReview(review.id)
     }
@@ -263,16 +269,18 @@ function ReviewCard({ review, currentUserId }: {
             {review.comment}
           </p>
         )}
-        {isOwner && !editing && (
+        {canDelete && !editing && (
           <div className="flex gap-2">
-            <Button
-              onClick={() => setEditing(true)}
-              size="sm"
-              type="button"
-              variant="outline"
-            >
-              Edit
-            </Button>
+            {isOwner && (
+              <Button
+                onClick={() => setEditing(true)}
+                size="sm"
+                type="button"
+                variant="outline"
+              >
+                Edit
+              </Button>
+            )}
             <Button
               disabled={deletion.isLoading}
               onClick={() => void remove()}
@@ -283,7 +291,7 @@ function ReviewCard({ review, currentUserId }: {
               {deletion.isLoading && (
                 <LoaderCircle aria-hidden="true" className="animate-spin" />
               )}
-              Delete
+              {canModerate && !isOwner ? "Remove review" : "Delete"}
             </Button>
           </div>
         )}
@@ -452,6 +460,7 @@ function ReviewSectionBody({
         <div className="space-y-3">
           {reviews.map((review) => (
             <ReviewCard
+              canModerate={profile.data?.data.role === "ADMIN"}
               currentUserId={session.data?.user.id}
               key={review.id}
               review={review}

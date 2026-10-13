@@ -2,6 +2,21 @@
 
 This document outlines the industry-standard project structure for a modern Next.js (App Router) multi-role marketplace application (such as MediStore or SkillBridge) using a root-level architecture.
 
+## Current FoodHub implementation
+
+The tree below is a reference scaffold, not a list of required folders. FoodHub
+uses `store/api/` for RTK Query requests and `lib/` for shared helpers; unused
+`services/`, `utils/`, and `app/api/` placeholders have been removed.
+
+Only the currently used UI primitives are retained in `components/ui/`:
+button, card, input, textarea, and tooltip. Add further primitives through
+shadcn when a feature needs them. `lib/utils.ts` remains the utility alias used
+by `components.json` for generated components.
+
+Unused starter SVG assets and empty asset directories have been removed.
+Create `public/` again when adding local static assets; the favicon remains
+in `app/favicon.ico`.
+
 ## 📂 Directory Layout
 
 ```text

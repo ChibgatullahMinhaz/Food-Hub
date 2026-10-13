@@ -5,6 +5,7 @@ import Link from "next/link"
 import { usePathname, useRouter, useSearchParams } from "next/navigation"
 import { ChevronDown, LoaderCircle, LogOut, UserRound } from "lucide-react"
 import { authClient } from "@/lib/auth-client"
+import { dashboardPathByRole } from "@/lib/auth-routes"
 import { Button } from "@/components/ui/button"
 import {
   Card,
@@ -138,11 +139,7 @@ export function DashboardRouter() {
 
     const role = userProfile.role
     const nextPath = getSafeNextPath(searchParams.get("next"))
-    const rolePath = {
-      CUSTOMER: "/customer",
-      PROVIDER: "/seller",
-      ADMIN: "/admin",
-    }[role]
+    const rolePath = dashboardPathByRole[role]
     const destination =
       nextPath === "/" || nextPath === "/dashboard" ? rolePath : nextPath
 
@@ -229,7 +226,7 @@ export function AccountNavigation() {
       requestedUserId.current = userId
 
       if (userId) {
-        void loadProfile()
+        void loadProfile(undefined, true)
       }
     }
   }, [
